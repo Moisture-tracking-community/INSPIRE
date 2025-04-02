@@ -207,9 +207,6 @@ def plotting_sources_cases(ds_data, mask, ens_names, figwidth=24, figheight=14, 
     for iens, ens in enumerate(ens_names):
         print("------  Plotting", ens)
 
-        if ens=="WRF-WVT":
-            ds_data[ens] = ds_data[ens] * vmax
-
         filtered_data = ds_data[ens].where(ds_data[ens] >0.001 , np.nan)
         cb =  filtered_data.plot(ax=axs[i,j],vmin=0,vmax=vmax,robust=False,cmap=cm,transform = crs.PlateCarree(),extend="max", add_colorbar=False, add_labels=False)
         axs[i,j].set_title(f" {labels[iens]} {ens}", loc="left", fontsize=fsize+1)
