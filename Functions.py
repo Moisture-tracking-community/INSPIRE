@@ -1,8 +1,10 @@
 import numpy as np
 import cartopy.crs as crs
 import cartopy
+from cartopy.mpl.ticker import LongitudeFormatter
 from cmocean import cm
 import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 import matplotlib as mpl
 import xarray as xr
 import datetime                 # Datetime is a package to deal with dates.
@@ -259,7 +261,150 @@ def plotting_sources(ds_data, mask, ens_names, casename, figwidth=24, figheight=
 
     fig.savefig(fname, dpi=300,  bbox_inches="tight")
 
+def plotting_sources_cases(ds_data, mask, ens_names, figwidth=24, figheight=14, vmax=5, central_longitude=0, figrows=5, figcols=5, map_lons_extend=[-85, 40], map_lats_extend=[10,80], glons=[0,10,20],    fsize=15, cblabel=True, cm=cm.rain, fname="fig"):
 
+
+    my_projection = crs.PlateCarree(central_longitude=central_longitude)
+    rows=figrows
+    cols=figcols
+    # Make figure
+    fig, axs = plt.subplots(rows, cols, figsize=(figwidth, figheight),subplot_kw={'projection': my_projection})
+    i=0
+    j=0
+
+    labels=["(a)","(b)","(c)","(d)","(e)","(f)","(g)","(h)","(i)","(j)","(k)","(l)","(m)","(n)","(o)","(p)","(q)","(r)","(s)","(t)","(u)","(v)","(w)","(x)","(y)","(z)"]
+
+    for iens, ens in enumerate(ens_names):
+        print("------  Plotting", ens)
+
+        filtered_data = ds_data[ens].where(ds_data[ens] >0.001 , np.nan)
+        cb =  filtered_data.plot(ax=axs[i,j],vmin=0,vmax=vmax,robust=False,cmap=cm,transform = crs.PlateCarree(),extend="max", add_colorbar=False, add_labels=False)
+        axs[i,j].set_title(f" {labels[iens]} {ens}", loc="left", fontsize=fsize+1)
+
+
+        if len(mask['mask'].values.shape)>2:
+            maskvals=mask['mask'].values[0,:]
+        else:
+            maskvals=mask['mask'].values
+
+        axs[i,j].contour(mask['lon'].values, mask['lat'].values, maskvals ,colors=["r"],transform = crs.PlateCarree())
+        axs[i,j].add_feature(cartopy.feature.COASTLINE, linewidth=0.8)
+        axs[i,j].add_feature(cartopy.feature.BORDERS, linestyle='-', linewidth=.2)
+
+
+        lon_formatter = LongitudeFormatter(direction_label=False, degree_symbol='')
+        axs[i,j].xaxis.set_major_formatter(lon_formatter)
+        fig.axes[iens].set_extent([map_lons_extend[0], map_lons_extend[1], map_lats_extend[0], map_lats_extend[1]],crs.PlateCarree())
+
+
+        gl = axs[i,j].gridlines(draw_labels=True, linewidth=0)
+        gl.top_labels = False
+        gl.right_labels = False
+
+
+        if glons.max()>180:
+            glons = (glons + 180) % 360 - 180
+
+        gl.xlocator =  mticker.FixedLocator(glons)
+        gl.ylocator = mticker.MultipleLocator(20)
+        gl.xlabel_style = {'size': fsize, 'color': 'k'}
+        gl.ylabel_style = {'size': fsize, 'color': 'k'}
+
+
+
+
+        #Dismiss label of y-axis, except for left most column
+
+        if(j > 0):
+            axs[i,j].set_ylabel("")
+        else:
+            axs[i,j].set_ylabel("Latitude")
+
+
+        if i==rows-1:
+            axs[i,j].set_xlabel("Longitude")
+        else:
+            axs[i,j].set_xlabel("")
+
+        if j<cols-1:
+            i=i
+            j=j+1
+        else:
+            i=i+1
+            j=0
+
+
+    cbar = fig.colorbar(cb, ax=axs, orientation='horizontal', fraction=0.05, pad=0.035, aspect=50)
+
+    if  cblabel:
+        cbar.set_label('(mm)',size=fsize+1)
+    cbar.ax.tick_params(labelsize=fsize+1)
+
+
+    fig.savefig(fname,dpi=600,  bbox_inches="tight")
+    plt.close()
+
+
+
+def plotting_sources_one_case(ds_data, mask, ens_names, figwidth=24, figheight=14, vmax=5, central_longitude=0, figrows=1, figcols=1, map_lons_extend=[-85, 40], map_lats_extend=[10,80], glons=[0,10,20],    fsize=15, cblabel=True, cm=cm.rain, fname="fig"):
+
+
+    my_projection = crs.PlateCarree(central_longitude=central_longitude)
+    rows=figrows
+    cols=figcols
+    for iens, ens in enumerate(ens_names):
+        fig, axs = plt.subplots(rows, cols, figsize=(figwidth, figheight),subplot_kw={'projection': my_projection})
+
+        print("------  Plotting", ens)
+
+        if ens=="WRF-WVT":
+            ds_data[ens] = ds_data[ens] * vmax
+
+        filtered_data = ds_data[ens].where(ds_data[ens] >0.001 , np.nan)
+        cb = filtered_data.plot(ax=axs,vmin=0,vmax=vmax,robust=False,cmap=cm,transform = crs.PlateCarree(), extend="max",add_colorbar=False)
+
+        axs.set_title(ens, loc="left", fontsize=fsize+2)
+
+
+        if len(mask['mask'].values.shape)>2:
+            maskvals=mask['mask'].values[0,:]
+        else:
+            maskvals=mask['mask'].values
+
+        axs.contour(mask['lon'].values, mask['lat'].values, maskvals ,colors=["r"],transform = crs.PlateCarree())
+        axs.add_feature(cartopy.feature.COASTLINE, linewidth=0.8)
+        axs.add_feature(cartopy.feature.BORDERS, linestyle='-', linewidth=.2)
+
+        lon_formatter = LongitudeFormatter(direction_label=False, degree_symbol='')
+        axs.xaxis.set_major_formatter(lon_formatter)
+        fig.axes[0].set_extent([map_lons_extend[0], map_lons_extend[1], map_lats_extend[0], map_lats_extend[1]],crs.PlateCarree())
+
+        #Dismiss label of y-axis, except for left most column
+        gl = axs.gridlines(draw_labels=True, linewidth=0)
+        gl.top_labels = False
+        gl.right_labels = False
+
+        #glons=np.arange(map_lons_extend[0]+5,map_lons_extend[1]+25,20)
+
+        if glons.max()>180:
+            glons = (glons + 180) % 360 - 180
+
+        gl.xlocator =  mticker.FixedLocator(glons)
+        gl.ylocator = mticker.MultipleLocator(20)
+        gl.xlabel_style = {'size': fsize+1, 'color': 'k'}
+        gl.ylabel_style = {'size': fsize+1, 'color': 'k'}
+
+
+        cbar = fig.colorbar(cb, ax=axs, orientation='horizontal', fraction=0.05, pad=0.035, aspect=50)
+
+        if  cblabel:
+            cbar.set_label('(mm)',size=fsize+2)
+        cbar.ax.tick_params(labelsize=fsize+2)
+
+
+
+        fig.savefig(fname+"_"+ens+".png",dpi=300,  bbox_inches="tight")
+        plt.close()
 
 def plot_precip(precip_era5,case,outpath,closeplot):
 
