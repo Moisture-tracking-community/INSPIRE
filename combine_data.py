@@ -417,7 +417,6 @@ def read_precip_era5(basedir, casename, exclude):
                 ds=xr.open_mfdataset(path+filename,combine="nested",concat_dim="time")#.sum("time")
                 a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-80,80.1,0.25), np.arange(-180,180,0.25))
                 if casename=='Pakistan':
-                    ds[variable] = ds[variable] / grid_cell_area(ds[variable].latitude, ds[variable].longitude) * 1000 #Needed because of old units 
                     a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
                     A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*17) 
                 elif casename=='Scotland':
