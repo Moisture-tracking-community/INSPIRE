@@ -271,7 +271,7 @@ def plotting_sources_cases(ds_data, mask, ens_names, figwidth=24, figheight=14, 
     cbar.ax.tick_params(labelsize=fsize+1)
 
 
-    fig.savefig(fname,dpi=300,  bbox_inches="tight")
+    fig.savefig(fname,dpi=600,  bbox_inches="tight")
     plt.close()
 
 
