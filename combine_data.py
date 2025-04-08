@@ -16,7 +16,7 @@ import numpy as np
 import xarray as xr
 import glob
 
-from Functions import grid_cell_area
+from Functions import grid_cell_area,get_grid_info_new
 
 
 def read_wam2layers(basedir, casename):
@@ -342,6 +342,102 @@ def read_data(basedir, casename):
             read_flexpart_xu(basedir, casename),
             read_flexpart_tatfancheng(basedir, casename),
             read_uvigo(basedir, casename),
-            read_wrf_wvt(basedir, casename)
+            read_wrf_wvt(basedir, casename),
         ]
     )
+    
+
+def read_precip_era5(basedir, casename, exclude):
+    A={}
+
+    for model in ['results 2LDRM','results FLEXPART_WaterSip_TatFanCheng','results UGhent HAMSTER','results Utrack Arie Staal','results WRF-WVT','results B-TrIMS','results Ru_Xu_FLEXPART','results UiB FLEXPART WaterSip',
+                  'results Uvigo','results CHc LAGRANTO','results TRACMASS Dipanjan Dey','results univie FLEXPART','results WAM2layers']:
+    
+        # Load and select variable for each model providing a timeline of the sum of ERA5 precipitation in the sink region as used in the diagnostic
+        path=basedir+'/'+casename+'/'+model
+        if model=='results 2LDRM': 
+            filename='/'+casename+'_precip'
+            variable='precip_era5'
+            name='2LDRM'
+        elif model=='results FLEXPART_WaterSip_TatFanCheng': 
+            filename='/'+casename+'_precip_Ens2.nc'
+            variable='precip_estimate'
+            name='FLEXPART-WaterSip (TFC) Ens2'
+        elif model=='results Utrack Arie Staal':
+            if casename=='Pakistan': filename='/ERA5_input/'+casename+'_precip.nc'
+            else: filename='/'+casename+'_precip.nc'
+            variable='precip_era5'       
+            name='UTrack Ens2'
+        elif model=='results TRACMASS Dipanjan Dey':
+            filename='/PR_ERA5_TRACMASS.nc'
+            variable='PR_ERA5'
+            name='TRACMASS'
+        elif model=='results univie FLEXPART':
+            filename='/'+casename.lower()+'_precip.nc'
+            variable='precip_era5'
+            name='FLEXPART-WaterSip (UniVie)'
+        elif model=='results WAM2layers':
+            name='WAM2layers'
+            if casename=='Pakistan': 
+                filename='/backtrack_*'#2022-08-23T00-00.nc'
+            elif casename=='Scotland':
+                filename='/backtrack_*'#2023-10-08T00-00.nc'
+            elif casename=='Australia': 
+                filename='/backtrack_*'#2022-02-28T00-00.nc'
+            variable='tagged_precip'
+        else: 
+            filename='/'+casename+'_precip.nc'
+            variable='precip_era5'
+            if model=='results UGhent HAMSTER':name='FLEXPART-HAMSTER Ens5'
+            elif model=='results WRF-WVT':name='WRF_WVT'
+            elif model=='results B-TrIMS':
+                name='B-TrIMS'
+                if casename=='Australia':
+                    path=basedir+'/'+casename+'/'+'results_B-TrIMS'
+                else: 
+                    path=basedir+'/'+casename+'/'+model
+                    
+            elif model=='results Ru_Xu_FLEXPART':name='FLEXPART-WaterSip (Xu)'
+            elif model=='results UiB FLEXPART WaterSip':name='FLEXPART-WaterSip (UiB)'
+            elif model=='results Uvigo':name='FLEXPART-LATTIN (UVigo)'
+            elif model=='results CHc LAGRANTO':name='LAGRANTO-WaterSip (CHc)'
+       
+        print(model)
+        if model not in exclude: #no precipitation timeline available (or not as mm over sink region)
+            if model=='results CHc LAGRANTO':
+                ds=xr.open_dataset(path+filename,decode_times=False)
+                ds.hourssincestart.attrs["units"] = "hours since 2022-08-10"
+                A[name] = xr.decode_cf(ds)[variable]
+            elif model=='results Uvigo':
+                ds=xr.open_dataset(path+filename,decode_times=True)
+                if casename=='Pakistan':
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
+                    A[name]=(ds['precip_era5'][:,240:265,988:1005]*a_gridcell_newp)/(a_gridcell_newp.sum()*18)
+                elif casename=='Scotland':
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
+                    A[name]=(ds['precip_era5'][:,120:153,688:717]*a_gridcell_newp)/(a_gridcell_newp.sum()*29)
+                elif casename=='Australia':
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
+                    A[name]=(ds['precip_era5'][:,448:489,1316:1353]*a_gridcell_newp)/(a_gridcell_newp.sum()*37)                
+                A[name]=A[name].sum(['lon','lat'])
+            elif model=='results WAM2layers':
+                ds=xr.open_mfdataset(path+filename,combine="nested",concat_dim="time")#.sum("time")
+                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-80,80.1,0.25), np.arange(-180,180,0.25))
+                if casename=='Pakistan':
+                    ds[variable] = ds[variable] / grid_cell_area(ds[variable].latitude, ds[variable].longitude) * 1000 #Needed because of old units 
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
+                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*17) 
+                elif casename=='Scotland':
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
+                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*29)
+                elif casename=='Australia':
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
+                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*37)  
+                A[name]=A[name].sum(['longitude','latitude']) 
+            else: 
+                A[name]=xr.open_dataset(path+filename,decode_times=True)[variable]
+                
+    
+    return (
+        A
+    )    
