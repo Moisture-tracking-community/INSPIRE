@@ -36,14 +36,7 @@ def read_wam2layers(basedir, casename):
         .rename("WAM2layers")
     )
 
-    if casename == "Pakistan":
-        # Convert units
-        # TODO might not be necessary with latest version of data, see
-        # https://github.com/WAM2layers/Moisture_tracking_intercomparison/issues/43
-        return ds / grid_cell_area(ds.lat, ds.lon) * 1000
-    else:
-        return ds
-
+    return ds
 
 def read_wrf_wvt(basedir, casename):
     """Read data from WRF-WVT"""
