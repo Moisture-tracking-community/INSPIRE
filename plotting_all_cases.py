@@ -8,8 +8,21 @@ import matplotlib.ticker as mticker
 import argparse
 
 from Functions import plotting_sources_cases, plotting_sources_one_case, calc_fractional_sources
-from combine_data_read import read_data
+from combine_data import read_data
 from cmocean import cm
+
+
+##################
+#Example for running this code
+
+#python plotting_all_cases.py --casename Australia --plot_all t --plot_model_member f  --model_member_number 5
+
+#
+
+#General options
+cases=['Pakistan', 'Australia',"Scotland"]
+basedir="./"
+figure_path = "./Figures/"
 
 def read_args():
     parser = argparse.ArgumentParser()
@@ -93,16 +106,6 @@ fig_lon_ticks={
     }
 
 
-##################
-#Example for running this code
-
-#python plotting_all_cases.py --casename Australia --plot_all t --plot_model_member f  --model_member_number 5
-
-#
-
-
-cases=['Pakistan', 'Australia',"Scotland"]
-basedir="./DATA/"
 
 args = read_args()
 if args.casename=="":
@@ -113,6 +116,15 @@ if args.plot_all:
 
     for case in cases:
         ds_data = read_data(basedir, case)
+        
+        # Select one ensemble member per method
+        drop_list = ["UTrack Ens1", "UTrack Ens3", "UTrack Ens4", "UTrack Ens5", 
+             "FLEXPART-HAMSTER Ens1", "FLEXPART-HAMSTER Ens2", 
+             "FLEXPART-HAMSTER Ens3", "FLEXPART-HAMSTER Ens4",
+            "FLEXPART-WaterSip (TFC) Ens1", "FLEXPART-WaterSip (TFC) Ens3"
+            ]
+        ds_data = ds_data.drop_vars(drop_list)
+        
         mask=xr.open_dataset(f"{basedir}/{case}/{masks[case]}")
 
         mean = ds_data.to_array(dim='mean').mean('mean')
@@ -121,7 +133,7 @@ if args.plot_all:
 
 
         print("--> Plotting sources")
-        plotting_sources_cases(ds_data, mask, ds_data.keys(), figwidth=fig_features[case][0], figheight=fig_features[case][1], vmax=fig_features[case][4], central_longitude=maps_features[case][0], figrows=fig_features[case][2], figcols=fig_features[case][3], map_lons_extend=[maps_features[case][1], maps_features[case][2]], map_lats_extend=[maps_features[case][3],maps_features[case][4]], glons=fig_lon_ticks[case], fsize=12, fname=f"./OUTPUTS/AbsoluteMoistureSources_{case}.png")
+        plotting_sources_cases(ds_data, mask, ds_data.keys(), figwidth=fig_features[case][0], figheight=fig_features[case][1], vmax=fig_features[case][4], central_longitude=maps_features[case][0], figrows=fig_features[case][2], figcols=fig_features[case][3], map_lons_extend=[maps_features[case][1], maps_features[case][2]], map_lats_extend=[maps_features[case][3],maps_features[case][4]], glons=fig_lon_ticks[case], fsize=12, fname=f"./Figures/Figure4_AbsoluteMoistureSources_{case}.png")
 
         #quit()
 
@@ -143,7 +155,7 @@ if args.plot_model_member:
         ens_names=list(ds_data.keys())
 
 
-        plotting_sources_one_case(ds_data, mask, [ens_names[args.model_member_number]], figwidth=fig_features_one[case][0], figheight=fig_features_one[case][1], vmax=fig_features_one[case][4], central_longitude=maps_features[case][0], figrows=fig_features_one[case][2], figcols=fig_features_one[case][3], map_lons_extend=[maps_features[case][1], maps_features[case][2]], map_lats_extend=[maps_features[case][3],maps_features[case][4]], glons=fig_lon_ticks[case], fname=f"./OUTPUTS/AbsoluteMoistureSources_{case}")
+        plotting_sources_one_case(ds_data, mask, [ens_names[args.model_member_number]], figwidth=fig_features_one[case][0], figheight=fig_features_one[case][1], vmax=fig_features_one[case][4], central_longitude=maps_features[case][0], figrows=fig_features_one[case][2], figcols=fig_features_one[case][3], map_lons_extend=[maps_features[case][1], maps_features[case][2]], map_lats_extend=[maps_features[case][3],maps_features[case][4]], glons=fig_lon_ticks[case], fname=f"{figure_path}Figure4_AbsoluteMoistureSources_{case}")
 
         #quit()
         #ds_data_frac = xr.Dataset(coords=ds_data.coords, attrs=ds_data.attrs)
