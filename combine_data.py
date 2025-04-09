@@ -185,7 +185,7 @@ def read_flexpart_tatfancheng(basedir, casename):
         ds = xr.open_dataset(path / filename)
         # convert to -180 to 180 lon
         ds["lon"] = (ds["lon"] + 180) % 360 - 180
-        ensemble[f"FLEXPART-WaterSip (TFC) {member}"] = ds.sortby(ds.lon)["Cb"]
+        ensemble[f"FLEXPART-WaterSip (HKUST) {member}"] = ds.sortby(ds.lon)["Cb"]
 
     return xr.Dataset(ensemble)
 
@@ -206,7 +206,7 @@ def read_flexpart_xu(basedir, casename):
     return (
         xr.open_dataset(path / filename)["data"]
         .sum("time")
-        .rename("FLEXPART-WaterSip (Xu)")
+        .rename("FLEXPART-WaterSip (IBCAS)")
     )
 
 
