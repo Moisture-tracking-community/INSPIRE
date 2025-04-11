@@ -8,9 +8,11 @@ _Contributing_models.txt_ is a text file containing the models contributing the 
 
 _Function.py_ contains function to load in tagging region, calculate area of grids, and to determine fractional and regional moisture sources.
 
-_Pakistan_case_sharing.ipynb_ loads in data for the Pakistan case, and includes examples of making plots of sources, fractional sources and the regional sources. 
-
 _IPCCregions_Pakistancase.nc_ is a netcdf file containing the IPCC regions for the Pakistan case. 
 
-
+_barplots_all_cases.ipynb_ creates a plot to plot the relative moisture sources compared to the input (precipitation)
+_Global_map.ipynb_ Plots the multi-method mean of the moisture sources for all three cases in one map
+_BeeswarmAndBoxPlots_AllCases.ipynb_ Makes a figure which shows the difference in regional contributions for all ensemble members (including the extra ensemble members for some methods)
+_plotting_all_cases.py_ is a script to load in data for the all three cases and make a plot of the moisture sources of all (selected) members, or a method specifically. 
+_Correlation_matrix.ipynb_ is a script to plot the correlation between all methods for all three cases
 
