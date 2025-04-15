@@ -36,14 +36,7 @@ def read_wam2layers(basedir, casename):
         .rename("WAM2layers")
     )
 
-    if casename == "Pakistan":
-        # Convert units
-        # TODO might not be necessary with latest version of data, see
-        # https://github.com/WAM2layers/Moisture_tracking_intercomparison/issues/43
-        return ds / grid_cell_area(ds.lat, ds.lon) * 1000
-    else:
-        return ds
-
+    return ds
 
 def read_wrf_wvt(basedir, casename):
     """Read data from WRF-WVT"""
@@ -192,7 +185,7 @@ def read_flexpart_tatfancheng(basedir, casename):
         ds = xr.open_dataset(path / filename)
         # convert to -180 to 180 lon
         ds["lon"] = (ds["lon"] + 180) % 360 - 180
-        ensemble[f"FLEXPART-WaterSip (TFC) {member}"] = ds.sortby(ds.lon)["Cb"]
+        ensemble[f"FLEXPART-WaterSip (HKUST) {member}"] = ds.sortby(ds.lon)["Cb"]
 
     return xr.Dataset(ensemble)
 
@@ -213,7 +206,7 @@ def read_flexpart_xu(basedir, casename):
     return (
         xr.open_dataset(path / filename)["data"]
         .sum("time")
-        .rename("FLEXPART-WaterSip (Xu)")
+        .rename("FLEXPART-WaterSip (IBCAS)")
     )
 
 
@@ -424,7 +417,6 @@ def read_precip_era5(basedir, casename, exclude):
                 ds=xr.open_mfdataset(path+filename,combine="nested",concat_dim="time")#.sum("time")
                 a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-80,80.1,0.25), np.arange(-180,180,0.25))
                 if casename=='Pakistan':
-                    ds[variable] = ds[variable] / grid_cell_area(ds[variable].latitude, ds[variable].longitude) * 1000 #Needed because of old units 
                     a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
                     A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*17) 
                 elif casename=='Scotland':
