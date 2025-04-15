@@ -15,13 +15,14 @@ from cmocean import cm
 ##################
 #Example for running this code
 
-#python plotting_all_cases.py --casename Australia --plot_all t --plot_model_member f  --model_member_number 5
+# python Figure4_plotting_all_cases.py
+# python Figure4_plotting_all_cases.py --casename Australia --plot_all t --plot_model_member f  --model_member_number 5
 
 #
 
 #General options
 cases=['Pakistan', 'Australia',"Scotland"]
-basedir="./"
+basedir = "./data/"
 figure_path = "./Figures/"
 
 def read_args():
@@ -118,11 +119,18 @@ if args.plot_all:
         ds_data = read_data(basedir, case)
         
         # Select one ensemble member per method
-        drop_list = ["UTrack Ens1", "UTrack Ens3", "UTrack Ens4", "UTrack Ens5", 
-             "FLEXPART-HAMSTER Ens1", "FLEXPART-HAMSTER Ens2", 
-             "FLEXPART-HAMSTER Ens3", "FLEXPART-HAMSTER Ens4",
-            "FLEXPART-WaterSip (TFC) Ens1", "FLEXPART-WaterSip (TFC) Ens3"
-            ]
+        drop_list = [
+            "UTrack Ens1",
+            "UTrack Ens3",
+            "UTrack Ens4",
+            "UTrack Ens5",
+            "FLEXPART-HAMSTER Ens1",
+            "FLEXPART-HAMSTER Ens2",
+            "FLEXPART-HAMSTER Ens3",
+            "FLEXPART-HAMSTER Ens4",
+            "FLEXPART-WaterSip (HKUST) Ens1",
+            "FLEXPART-WaterSip (HKUST) Ens3",
+        ]
         ds_data = ds_data.drop_vars(drop_list)
         
         mask=xr.open_dataset(f"{basedir}/{case}/{masks[case]}")
