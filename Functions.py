@@ -269,17 +269,17 @@ def plotting_sources_cases(ds_data, mask, ens_names, figwidth=24, figheight=14, 
     cols=figcols
     # Make figure
     fig, axs = plt.subplots(rows, cols, figsize=(figwidth, figheight),subplot_kw={'projection': my_projection})
-    i=0
-    j=0
-
-    labels=["(a)","(b)","(c)","(d)","(e)","(f)","(g)","(h)","(i)","(j)","(k)","(l)","(m)","(n)","(o)","(p)","(q)","(r)","(s)","(t)","(u)","(v)","(w)","(x)","(y)","(z)"]
+    labels = "abcdefghijklmno"
 
     for iens, ens in enumerate(ens_names):
         print("------  Plotting", ens)
 
+        i = iens // cols
+        j = iens % cols
+
         filtered_data = ds_data[ens].where(ds_data[ens] >0.001 , np.nan)
         cb =  filtered_data.plot(ax=axs[i,j],vmin=0,vmax=vmax,robust=False,cmap=cm,transform = crs.PlateCarree(),extend="max", add_colorbar=False, add_labels=False)
-        axs[i,j].set_title(f" {labels[iens]} {ens}", loc="left", fontsize=fsize+1)
+        axs[i, j].set_title(f" ({labels[iens]}) {ens}", loc="left", fontsize=fsize + 1)
 
 
         if len(mask['mask'].values.shape)>2:
@@ -301,45 +301,32 @@ def plotting_sources_cases(ds_data, mask, ens_names, figwidth=24, figheight=14, 
         gl.top_labels = False
         gl.right_labels = False
 
-
-        if glons.max()>180:
+        if glons.max() > 180:
             glons = (glons + 180) % 360 - 180
 
-        gl.xlocator =  mticker.FixedLocator(glons)
+        gl.xlocator = mticker.FixedLocator(glons)
         gl.ylocator = mticker.MultipleLocator(20)
-        gl.xlabel_style = {'size': fsize, 'color': 'k'}
-        gl.ylabel_style = {'size': fsize, 'color': 'k'}
+        gl.xlabel_style = {"size": fsize, "color": "k"}
+        gl.ylabel_style = {"size": fsize, "color": "k"}
 
+        # Dismiss label of y-axis, except for left most column
+        axs[i, j].set_ylabel("Latitude")
+        axs[i, j].set_xlabel("Longitude")
+        print(axs[i, j].get_ylabel())
 
+        if j > 0:
+            axs[i, j].set_ylabel("")
+            gl.left_labels = False
 
-
-        #Dismiss label of y-axis, except for left most column
-
-        if(j > 0):
-            axs[i,j].set_ylabel("")
-        else:
-            axs[i,j].set_ylabel("Latitude")
-
-
-        if i==rows-1:
-            axs[i,j].set_xlabel("Longitude")
-        else:
-            axs[i,j].set_xlabel("")
-
-        if j<cols-1:
-            i=i
-            j=j+1
-        else:
-            i=i+1
-            j=0
-
+        if i < rows - 1:
+            axs[i, j].set_xlabel("")
+            gl.bottom_labels = False
 
     cbar = fig.colorbar(cb, ax=axs, orientation='horizontal', fraction=0.05, pad=0.035, aspect=50)
 
     if  cblabel:
         cbar.set_label('(mm)',size=fsize+1)
     cbar.ax.tick_params(labelsize=fsize+1)
-
 
     fig.savefig(fname,dpi=600,  bbox_inches="tight")
     plt.close()
