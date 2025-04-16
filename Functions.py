@@ -324,6 +324,18 @@ def plotting_sources_cases(ds_data, mask, ens_names, figwidth=24, figheight=14, 
 
     cbar = fig.colorbar(cb, ax=axs, orientation='horizontal', fraction=0.05, pad=0.035, aspect=50)
 
+    
+    # Get proper ratio here; use one of the axis, e.g., axs[0, 0]
+    xmin, xmax = axs[0, 0].get_xbound()
+    ymin, ymax = axs[0, 0].get_ybound()
+    y2x_ratio = (ymax-ymin) / (xmax-xmin) * rows/cols
+    print(y2x_ratio)
+
+    # Apply new h/w aspect ratio by changing h
+    # Also possible to change w using set_figwidth()
+    fig.set_figheight(figwidth * y2x_ratio)
+    #fig.set_figwidth(figheight/y2x_ratio) #Not sure if this should be like this
+    
     if  cblabel:
         cbar.set_label('(mm)',size=fsize+1)
     cbar.ax.tick_params(labelsize=fsize+1)
