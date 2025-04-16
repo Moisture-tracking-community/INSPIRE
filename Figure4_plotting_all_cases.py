@@ -85,9 +85,9 @@ maps_features={
 
 fig_features={
     #case:[figwidth, figheight, figrows, figcols , vmax, vmax_frac]
-    "Scotland": [25,11,3,5,5, 0.02],
-    "Pakistan": [25,12,3,5,20, 0.02],
-    "Australia": [24,11,3,5,25, 0.02],
+    "Scotland": [32,20,3,5,5, 0.02], #[25,11,3,5,5, 0.02]
+    "Pakistan": [32,20,3,5,20, 0.02], #[25,12,3,5,20, 0.02]
+    "Australia": [32,20,3,5,25, 0.02], #[24,11,3,5,25, 0.02],
     }
 
 
