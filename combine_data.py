@@ -499,10 +499,6 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                 filename = "/TRACMASS_new_evap_sources_06-08oct2023.nc"  
             variable='P_TRACMASS'
             name='TRACMASS'
-        elif model=='results univie FLEXPART':
-            filename='/'+casename.lower()+'_precip.nc'
-            variable='precip_era5'
-            name='FLEXPART-WaterSip (UniVie)'
         elif model=='results WAM2layers':
             name='WAM2layers'
             if casename=='Pakistan': 
@@ -514,7 +510,7 @@ def read_tracked_precip(basedir, casename, exclude=[]):
             variable='tagged_precip'
         else: 
             filename='/'+casename+'_precip.nc'
-            variable='precip_era5'
+            variable='precip_estimate_sum'
             if model=='results UGhent HAMSTER':name='FLEXPART-HAMSTER Ens5'
             elif model=='results WRF-WVT':name='WRF_WVT'
             elif model=='results B-TrIMS':
@@ -523,10 +519,10 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                     path=basedir+'/'+casename+'/'+'results_B-TrIMS'
                 else: 
                     path=basedir+'/'+casename+'/'+model
-                    
-            elif model=='results Ru_Xu_FLEXPART':
-                name='FLEXPART-WaterSip (IBCAS)'
-                variable='precip_estimate_sum'
+            elif model=='results univie FLEXPART':
+                filename='/'+casename.lower()+'_precip.nc'
+                name='FLEXPART-WaterSip (UniVie)'
+            elif model=='results Ru_Xu_FLEXPART':name='FLEXPART-WaterSip (IBCAS)'
             elif model=='results UiB FLEXPART WaterSip':name='FLEXPART-WaterSip (UiB)'
             elif model=='results Uvigo':name='FLEXPART-LATTIN (UVigo)'
             elif model=='results CHc LAGRANTO':name='LAGRANTO-WaterSip (CHc)'
