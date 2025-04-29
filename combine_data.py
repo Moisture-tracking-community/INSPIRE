@@ -15,6 +15,7 @@ from pathlib import Path
 import numpy as np
 import xarray as xr
 import glob
+import pandas as pd
 
 from Functions import grid_cell_area,get_grid_info_new
 
@@ -463,7 +464,7 @@ def read_precip_era5(basedir, casename, exclude=[]):
                 A[name]=xr.open_dataset(path+filename,decode_times=True)[variable]
                 
             if model=='results FLEXPART_WaterSip_TatFanCheng': 
-                A[name].values = np.full([7,1], np.nan) #Set to Nan for now since it is not ERA5 data. 
+                A[name].values = np.full(A[name].values.shape, np.nan) #Set to Nan for now since it is not ERA5 data. 
     return (
         A
     )    
@@ -508,24 +509,31 @@ def read_tracked_precip(basedir, casename, exclude=[]):
             elif casename=='Australia': 
                 filename='/backtrack_*'#2022-02-28T00-00.nc'
             variable='tagged_precip'
+        elif model== 'results UGhent HAMSTER':
+            name='FLEXPART-HAMSTER Ens5'
+            filename='/'+casename+'_precip_areacor.nc'
+            variable='precip_era5_sum'
+        elif model=='results B-TrIMS':
+            name='B-TrIMS'
+            filename='/'+casename+'_precip.nc'
+            variable='precip_era5'
+            if casename=='Australia':
+                path=basedir+'/'+casename+'/'+'results_B-TrIMS'
+            else: 
+                path=basedir+'/'+casename+'/'+model
         else: 
             filename='/'+casename+'_precip.nc'
             variable='precip_estimate_sum'
-            if model=='results UGhent HAMSTER':name='FLEXPART-HAMSTER Ens5'
-            elif model=='results WRF-WVT':name='WRF_WVT'
-            elif model=='results B-TrIMS':
-                name='B-TrIMS'
-                if casename=='Australia':
-                    path=basedir+'/'+casename+'/'+'results_B-TrIMS'
-                else: 
-                    path=basedir+'/'+casename+'/'+model
+            if model=='results WRF-WVT':name='WRF_WVT'
             elif model=='results univie FLEXPART':
                 filename='/'+casename.lower()+'_precip.nc'
                 name='FLEXPART-WaterSip (UniVie)'
             elif model=='results Ru_Xu_FLEXPART':name='FLEXPART-WaterSip (IBCAS)'
             elif model=='results UiB FLEXPART WaterSip':name='FLEXPART-WaterSip (UiB)'
             elif model=='results Uvigo':name='FLEXPART-LATTIN (UVigo)'
-            elif model=='results CHc LAGRANTO':name='LAGRANTO-WaterSip (CHc)'
+            elif model=='results CHc LAGRANTO':
+                name='LAGRANTO-WaterSip (CHc)'
+                variable='precip_era5'
        
         print(model)
         if model not in exclude: #no precipitation timeline available (or not as mm over sink region)
@@ -534,17 +542,11 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                 ds.hourssincestart.attrs["units"] = "hours since 2022-08-10"
                 A[name] = xr.decode_cf(ds)[variable]
             elif model=='results Uvigo':
-                ds=xr.open_dataset(path+filename,decode_times=True)
-                if casename=='Pakistan':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
-                    A[name]=(ds['precip_era5'][:,240:265,988:1005]*a_gridcell_newp)/(a_gridcell_newp.sum()*18)
-                elif casename=='Scotland':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
-                    A[name]=(ds['precip_era5'][:,120:153,688:717]*a_gridcell_newp)/(a_gridcell_newp.sum()*29)
-                elif casename=='Australia':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
-                    A[name]=(ds['precip_era5'][:,448:489,1316:1353]*a_gridcell_newp)/(a_gridcell_newp.sum()*37)                
-                A[name]=A[name].sum(['lon','lat'])
+                df_Stohl = pd.read_csv(path + '/Total_Lagrangian_precip_SJ05.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-Stohl (UVigo)"])
+                df_LATTIN = pd.read_csv(path + '/Total_Lagrangian_precip_APA22.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-LATTIN (UVigo)"])
+                A["FLEXPART-Stohl (UVigo)"] = df_Stohl
+                A["FLEXPART-LATTIN (UVigo)"] = df_LATTIN
+                #df_merged = pd.merge(df_Stohl,df_LATTIN,on='Index')                
             elif model=='results WAM2layers':
                 ds=xr.open_mfdataset(path+filename,combine="nested",concat_dim="time")#.sum("time")
                 a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-80,80.1,0.25), np.arange(-180,180,0.25))
