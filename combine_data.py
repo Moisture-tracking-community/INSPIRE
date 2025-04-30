@@ -542,7 +542,10 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                 ds.hourssincestart.attrs["units"] = "hours since 2022-08-10"
                 A[name] = xr.decode_cf(ds)[variable]
             elif model=='results Uvigo':
-                df_Stohl = pd.read_csv(path + '/Total_Lagrangian_precip_SJ05.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-Stohl (UVigo)"])
+                if(casename=='Scotland'):
+                    df_Stohl = pd.read_csv(path + '/Total_Lagrangian_precip_SJ05_back.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-Stohl (UVigo)"])
+                else:
+                    df_Stohl = pd.read_csv(path + '/Total_Lagrangian_precip_SJ05.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-Stohl (UVigo)"])
                 df_LATTIN = pd.read_csv(path + '/Total_Lagrangian_precip_APA22.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-LATTIN (UVigo)"])
                 A["FLEXPART-Stohl (UVigo)"] = df_Stohl
                 A["FLEXPART-LATTIN (UVigo)"] = df_LATTIN
