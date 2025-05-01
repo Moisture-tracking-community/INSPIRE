@@ -57,8 +57,8 @@ def read_uvigo(basedir, casename):
     path = basedir / casename / "results Uvigo"
     return xr.Dataset(
        {
-       "FLEXPART-LATTIN (UVigo)": xr.open_dataarray(path / "ERA5_APA22_reg.nc"),
-       "FLEXPART-Stohl (UVigo)": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
+       "FLEXPART-WaterSip (LATTIN, UVigo)": xr.open_dataarray(path / "ERA5_APA22_reg.nc"),
+       "FLEXPART-Stohl&James": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
         }
      )
     
@@ -232,7 +232,7 @@ def read_lagranto_chc(basedir, casename):
         .sum("time")
         .squeeze()
         .assign_coords(lat=np.arange(-90, 90.1, 0.25), lon=np.arange(-180, loncase, 0.25))
-        .rename("LAGRANTO-WaterSip (CHc)"))
+        .rename("LAGRANTO-WaterSip"))
     
     return  ds.isel(lon=slice(0,1440))
 
@@ -323,6 +323,7 @@ def read_data(basedir, casename):
 
     return xr.merge(
         [
+            read_wrf_wvt(basedir, casename),
             read_wam2layers(basedir, casename),
             read_2ldrm(basedir, casename),
             read_utrack(basedir, casename),
@@ -335,7 +336,6 @@ def read_data(basedir, casename):
             read_flexpart_xu(basedir, casename),
             read_flexpart_tatfancheng(basedir, casename),
             read_uvigo(basedir, casename),
-            read_wrf_wvt(basedir, casename),
         ]
     )
     
@@ -392,8 +392,8 @@ def read_precip_era5(basedir, casename, exclude):
                     
             elif model=='results Ru_Xu_FLEXPART':name='FLEXPART-WaterSip (Xu)'
             elif model=='results UiB FLEXPART WaterSip':name='FLEXPART-WaterSip (UiB)'
-            elif model=='results Uvigo':name='FLEXPART-LATTIN (UVigo)'
-            elif model=='results CHc LAGRANTO':name='LAGRANTO-WaterSip (CHc)'
+            elif model=='results Uvigo':name='FLEXPART-WaterSip (LATTIN, UVigo)'
+            elif model=='results CHc LAGRANTO':name='LAGRANTO-WaterSip'
        
         print(model)
         if model not in exclude: #no precipitation timeline available (or not as mm over sink region)

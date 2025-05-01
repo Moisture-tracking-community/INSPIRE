@@ -22,8 +22,8 @@ from cmocean import cm
 
 #General options
 cases=['Pakistan', 'Australia',"Scotland"]
-basedir = "./data/"
-figure_path = "./Figures/"
+basedir = "../data"
+figure_path = "../Figures"
 
 def read_args():
     parser = argparse.ArgumentParser()
@@ -141,7 +141,7 @@ if args.plot_all:
 
 
         print("--> Plotting sources")
-        plotting_sources_cases(ds_data, mask, ds_data.keys(), figwidth=fig_features[case][0], figheight=fig_features[case][1], vmax=fig_features[case][4], central_longitude=maps_features[case][0], figrows=fig_features[case][2], figcols=fig_features[case][3], map_lons_extend=[maps_features[case][1], maps_features[case][2]], map_lats_extend=[maps_features[case][3],maps_features[case][4]], glons=fig_lon_ticks[case], fsize=12, fname=f"./Figures/Figure4_AbsoluteMoistureSources_{case}.png")
+        plotting_sources_cases(ds_data, mask, ds_data.keys(), figwidth=fig_features[case][0], figheight=fig_features[case][1], vmax=fig_features[case][4], central_longitude=maps_features[case][0], figrows=fig_features[case][2], figcols=fig_features[case][3], map_lons_extend=[maps_features[case][1], maps_features[case][2]], map_lats_extend=[maps_features[case][3],maps_features[case][4]], glons=fig_lon_ticks[case], fsize=12, fname=f"../Figures/Figure4_AbsoluteMoistureSources_{case}.png")
 
         #quit()
 
