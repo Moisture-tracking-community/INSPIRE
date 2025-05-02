@@ -240,7 +240,7 @@ def read_lagranto_chc(basedir, casename):
         .assign_coords(
             lat=np.arange(-90, 90.1, 0.25), lon=np.arange(-180, loncase, 0.25)
         )
-        .rename("LAGRANTO-WaterSip (CHc)")
+        .rename("LAGRANTO-WaterSip")
     )
 
     return ds.isel(lon=slice(0, 1440))
@@ -448,7 +448,7 @@ def read_precip_era5(basedir, casename, exclude=[]):
             elif model == "results Uvigo":
                 name = "FLEXPART-WaterSip (LATTIN, UVigo)"
             elif model == "results CHc LAGRANTO":
-                name = "LAGRANTO-WaterSip (CHc)"
+                name = "LAGRANTO-WaterSip"
 
         print(model)
         if (
@@ -657,9 +657,9 @@ def read_tracked_precip(basedir, casename, exclude=[]):
             elif model == "results UiB FLEXPART WaterSip":
                 name = "FLEXPART-WaterSip (UiB)"
             elif model == "results Uvigo":
-                name = "FLEXPART-LATTIN (UVigo)"
+                name = "FLEXPART-WaterSip (LATTIN, UVigo)"
             elif model == "results CHc LAGRANTO":
-                name = "LAGRANTO-WaterSip (CHc)"
+                name = "LAGRANTO-WaterSip"
                 variable = "precip_era5"
 
         print(model)
@@ -677,7 +677,7 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                         sep=" ",
                         decimal=",",
                         index_col=0,
-                        names=["Index", "FLEXPART-Stohl (UVigo)"],
+                        names=["Index", "FLEXPART-Stohl&James"],
                     )
                 else:
                     df_Stohl = pd.read_csv(
@@ -685,17 +685,17 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                         sep=" ",
                         decimal=",",
                         index_col=0,
-                        names=["Index", "FLEXPART-Stohl (UVigo)"],
+                        names=["Index", "FLEXPART-Stohl&James"],
                     )
                 df_LATTIN = pd.read_csv(
                     path + "/Total_Lagrangian_precip_APA22.txt",
                     sep=" ",
                     decimal=",",
                     index_col=0,
-                    names=["Index", "FLEXPART-LATTIN (UVigo)"],
+                    names=["Index", "FLEXPART-WaterSip (LATTIN, UVigo)"],
                 )
-                A["FLEXPART-Stohl (UVigo)"] = df_Stohl
-                A["FLEXPART-LATTIN (UVigo)"] = df_LATTIN
+                A["FLEXPART-Stohl&James"] = df_Stohl
+                A["FLEXPART-WaterSip (LATTIN, UVigo)"] = df_LATTIN
                 # df_merged = pd.merge(df_Stohl,df_LATTIN,on='Index')
             elif model == "results WAM2layers":
                 ds = xr.open_mfdataset(

@@ -183,7 +183,7 @@ def calculate_region_attr(all_maps, csv_wrf_wvt, case, path_to_data):
     all_maps_regional = {}
 
     for kk in list(all_maps.keys()):
-        if kk == "LAGRANTO-WaterSip (CHc)":
+        if kk == "LAGRANTO-WaterSip":
             area_target = area_chc
         else:
             area_target = a_gridcell_newp[:].sum() * ll
@@ -909,7 +909,7 @@ def plot_abs_regional(
                 "{:.0f}".format(precip_sums[nn] / pr_sum * 100) + "%",
                 ha="center",
             )
-            if mname == "FLEXPART-LATTIN (UVigo)":
+            if mname == "FLEXPART-WaterSip (LATTIN, UVigo)":
                 nn = len(modelnames) - 1
                 ax2.hlines(
                     pr_sum,
