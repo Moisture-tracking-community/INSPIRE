@@ -132,7 +132,7 @@ if args.plot_all:
 
         print("--> Plotting sources")
         plotting_sources_cases(
-            ds_data,
+            ds_data.where(ds_data > 0.1),
             mask,
             ds_data.keys(),
             figwidth=fig_features[case][0],
