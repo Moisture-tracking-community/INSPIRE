@@ -24,4 +24,11 @@ bash run_all.sh
 
 ## Formatting
 
-You can use ruff (TODO: run ruff once)
+If you're editing the code, you may want to format it with ruff before comitting. As such, we keep the code nicely and consistently formatted.
+
+```py
+ruff check *.py --fix
+ruff check *.ipynb --fix
+ruff format *.py
+ruff format *.ipynb
+```

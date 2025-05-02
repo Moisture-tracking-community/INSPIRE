@@ -17,7 +17,7 @@ import xarray as xr
 import glob
 import pandas as pd
 
-from Functions import grid_cell_area,get_grid_info_new
+from Functions import get_grid_info_new
 
 
 def read_wam2layers(basedir, casename):
@@ -39,12 +39,13 @@ def read_wam2layers(basedir, casename):
 
     return ds
 
+
 def read_wrf_wvt(basedir, casename):
     """Read data from WRF-WVT"""
     print(f"Loading WRF-WVT data for {casename}")
 
     path = basedir / casename / "results WRF-WVT"
-    filename = casename+"Case_Final.nc"
+    filename = casename + "Case_Final.nc"
     ds = xr.open_dataset(path / filename)
     ds.coords["lon"] = (ds.coords["lon"] + 180) % 360 - 180
     ds = ds.sortby([ds.lon, ds.lat])
@@ -57,12 +58,14 @@ def read_uvigo(basedir, casename):
 
     path = basedir / casename / "results Uvigo"
     return xr.Dataset(
-       {
-       "FLEXPART-WaterSip (LATTIN, UVigo)": xr.open_dataarray(path / "ERA5_APA22_reg.nc"),
-       "FLEXPART-Stohl&James": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
+        {
+            "FLEXPART-WaterSip (LATTIN, UVigo)": xr.open_dataarray(
+                path / "ERA5_APA22_reg.nc"
+            ),
+            "FLEXPART-Stohl&James": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
         }
-     )
-    
+    )
+
 
 def read_utrack(basedir, casename):
     """Read data from UTRACK.
@@ -75,12 +78,12 @@ def read_utrack(basedir, casename):
     """
     print(f"Loading utrack data for {casename}")
     # TODO check units with Arie
-    
+
     n_gridcells_cases = {
-    	'Pakistan': (71 - 67) / 0.25 * (30 - 24) / 0.25,
-    	'Australia': (158 - 149) / 0.25 * (-22 - -32) / 0.25, 
-      	'Scotland': (-1 - -8) / 0.25 * (60 - 52) / 0.25  
-      	}  	
+        "Pakistan": (71 - 67) / 0.25 * (30 - 24) / 0.25,
+        "Australia": (158 - 149) / 0.25 * (-22 - -32) / 0.25,
+        "Scotland": (-1 - -8) / 0.25 * (60 - 52) / 0.25,
+    }
     path = basedir / casename / "results Utrack Arie Staal/"
 
     if casename == "Pakistan":
@@ -101,8 +104,9 @@ def read_utrack(basedir, casename):
             combine="nested",
             concat_dim="time",
         )["moisture_source"].sum("time")
- 
+
     return xr.Dataset(ensemble) * n_gridcells_cases[casename]
+
 
 def read_ughent(basedir, casename):
     """Read data from university of Ghent.
@@ -148,14 +152,14 @@ def read_tracmass(basedir, casename):
         filename = "TRACMASS_diagnostics.nc"
         nrdays = 15
     elif casename == "Scotland":
-        filename = "TRACMASS_new_evap_sources_06-08oct2023.nc"  
+        filename = "TRACMASS_new_evap_sources_06-08oct2023.nc"
         nrdays = 3
 
     print(f"Loading tracmass data for {casename}")
 
     path = basedir / casename / "results TRACMASS Dipanjan Dey"
     ds = xr.open_dataset(path / filename)  # Evaporative sources (and preicp?) mm/day
-    
+
     # convert to -180 to 180 lon
     ds.coords["lon"] = (ds.coords["lon"] + 180) % 360 - 180
     ds = ds.sortby(ds.lon)
@@ -215,7 +219,7 @@ def read_lagranto_chc(basedir, casename):
     """Read lagranto CHc data."""
     print(f"Loading CHc data for {casename}")
     path = basedir / casename / "results CHc LAGRANTO"
-   
+
     if casename == "Pakistan":
         loncase = 180
         year = 2022
@@ -238,8 +242,8 @@ def read_lagranto_chc(basedir, casename):
         )
         .rename("LAGRANTO-WaterSip (CHc)")
     )
-    
-    return  ds.isel(lon=slice(0,1440))
+
+    return ds.isel(lon=slice(0, 1440))
 
 
 def read_flexpart_univie(basedir, casename):
@@ -283,8 +287,10 @@ def read_flexpart_uib(basedir, casename):
         filename = f"{casename}_2023_UiB_Sodemann_grid_EN0_regridded.nc"
 
     path = basedir / casename / "results UiB FLEXPART WaterSip"
-    ds_flexpart_uib = xr.open_dataset(path / filename)["moisture_uptakes"].rename("FLEXPART-WaterSip (UiB)")
-    ds_flexpart_uib.coords['lon'] = (ds_flexpart_uib.coords['lon'] + 180) % 360 - 180
+    ds_flexpart_uib = xr.open_dataset(path / filename)["moisture_uptakes"].rename(
+        "FLEXPART-WaterSip (UiB)"
+    )
+    ds_flexpart_uib.coords["lon"] = (ds_flexpart_uib.coords["lon"] + 180) % 360 - 180
     ds_flexpart_uib = ds_flexpart_uib.sortby(ds_flexpart_uib.lon)
     return ds_flexpart_uib
 
@@ -295,9 +301,9 @@ def read_btrims(basedir, casename):
     folder = "results_B-TrIMS" if casename == "Australia" else "results B-TrIMS"
     path = basedir / casename / folder
 
-    file_pattern = path / f'bt.*.nc'
+    file_pattern = path / "bt.*.nc"
     files = sorted([f for f in glob.glob(str(file_pattern))])
-    ds = xr.open_mfdataset(files, concat_dim="time", combine='nested').sum(dim="time")
+    ds = xr.open_mfdataset(files, concat_dim="time", combine="nested").sum(dim="time")
 
     ds = xr.Dataset(
         data_vars={"wvcont": (["latitude", "longitude"], ds.wvcont.values)},
@@ -308,23 +314,23 @@ def read_btrims(basedir, casename):
     )["wvcont"]
     ds.coords["longitude"] = (ds.coords["longitude"] + 180) % 360 - 180
 
-    #Set boundary moisture sources to 0
-    if(casename == "Australia"):
-        ds[:,ds['longitude'] == -151.5] = 0
-        ds[:,ds['longitude'] == 86.5] = 0
-        ds[ds['latitude'] == -58.5,:] = 0
-        ds[ds['latitude'] == 8.5,:] = 0
-    elif(casename == "Pakistan"):
-        ds[:,ds['longitude'] == 11.5] = 0
-        ds[:,ds['longitude'] == 118.5] = 0
-        ds[ds['latitude'] == -38.5,:] = 0
-        ds[ds['latitude'] == 68.5,:] = 0      
-    elif(casename == "Scotland"):
-        ds[:,ds['longitude'] == -148.5] = 0
-        ds[:,ds['longitude'] == 118.5] = 0
-        ds[ds['latitude'] == -3.5,:] = 0
-        ds[ds['latitude'] == 83.5,:] = 0           
-        
+    # Set boundary moisture sources to 0
+    if casename == "Australia":
+        ds[:, ds["longitude"] == -151.5] = 0
+        ds[:, ds["longitude"] == 86.5] = 0
+        ds[ds["latitude"] == -58.5, :] = 0
+        ds[ds["latitude"] == 8.5, :] = 0
+    elif casename == "Pakistan":
+        ds[:, ds["longitude"] == 11.5] = 0
+        ds[:, ds["longitude"] == 118.5] = 0
+        ds[ds["latitude"] == -38.5, :] = 0
+        ds[ds["latitude"] == 68.5, :] = 0
+    elif casename == "Scotland":
+        ds[:, ds["longitude"] == -148.5] = 0
+        ds[:, ds["longitude"] == 118.5] = 0
+        ds[ds["latitude"] == -3.5, :] = 0
+        ds[ds["latitude"] == 83.5, :] = 0
+
     return (
         ds.sortby(ds.longitude)
         .rename(latitude="lat", longitude="lon")
@@ -353,273 +359,449 @@ def read_data(basedir, casename):
             read_tracmass(basedir, casename),
             read_ughent(basedir, casename),
             read_flexpart_uib(basedir, casename),
-            read_flexpart_univie(basedir, casename)	,
+            read_flexpart_univie(basedir, casename),
             read_lagranto_chc(basedir, casename),
             read_flexpart_xu(basedir, casename),
             read_flexpart_tatfancheng(basedir, casename),
             read_uvigo(basedir, casename),
         ]
     )
-    
+
 
 def read_precip_era5(basedir, casename, exclude=[]):
-    A={}
+    A = {}
 
-    for model in ['results 2LDRM','results FLEXPART_WaterSip_TatFanCheng','results UGhent HAMSTER','results Utrack Arie Staal','results WRF-WVT','results B-TrIMS','results Ru_Xu_FLEXPART','results UiB FLEXPART WaterSip',
-                  'results Uvigo','results CHc LAGRANTO','results TRACMASS Dipanjan Dey','results univie FLEXPART','results WAM2layers']:
-    
+    for model in [
+        "results 2LDRM",
+        "results FLEXPART_WaterSip_TatFanCheng",
+        "results UGhent HAMSTER",
+        "results Utrack Arie Staal",
+        "results WRF-WVT",
+        "results B-TrIMS",
+        "results Ru_Xu_FLEXPART",
+        "results UiB FLEXPART WaterSip",
+        "results Uvigo",
+        "results CHc LAGRANTO",
+        "results TRACMASS Dipanjan Dey",
+        "results univie FLEXPART",
+        "results WAM2layers",
+    ]:
         # Load and select variable for each model providing a timeline of the sum of ERA5 precipitation in the sink region as used in the diagnostic
-        path=basedir+'/'+casename+'/'+model
-        if model=='results 2LDRM': 
-            filename='/'+casename+'_precip'
-            variable='precip_era5'
-            name='2LDRM'
-        elif model=='results FLEXPART_WaterSip_TatFanCheng': 
-            filename='/'+casename+'_precip_Ens2.nc'
-            variable='precip_estimate' #This is not ERA5
-            name='FLEXPART-WaterSip (HKUST) Ens2'
-        elif model=='results Utrack Arie Staal':
-            if casename=='Pakistan': filename='/ERA5_input/'+casename+'_precip.nc'
-            else: filename='/'+casename+'_precip.nc'
-            variable='precip_era5'       
-            name='UTrack Ens2'
-        elif model=='results TRACMASS Dipanjan Dey':
-            #filename='/PR_ERA5_TRACMASS.nc'
+        path = basedir + "/" + casename + "/" + model
+        if model == "results 2LDRM":
+            filename = "/" + casename + "_precip"
+            variable = "precip_era5"
+            name = "2LDRM"
+        elif model == "results FLEXPART_WaterSip_TatFanCheng":
+            filename = "/" + casename + "_precip_Ens2.nc"
+            variable = "precip_estimate"  # This is not ERA5
+            name = "FLEXPART-WaterSip (HKUST) Ens2"
+        elif model == "results Utrack Arie Staal":
+            if casename == "Pakistan":
+                filename = "/ERA5_input/" + casename + "_precip.nc"
+            else:
+                filename = "/" + casename + "_precip.nc"
+            variable = "precip_era5"
+            name = "UTrack Ens2"
+        elif model == "results TRACMASS Dipanjan Dey":
+            # filename='/PR_ERA5_TRACMASS.nc'
             if casename == "Australia":
                 filename = "/PR_ERA5_TRACMASS_22-28feb2022.nc"
             elif casename == "Pakistan":
                 filename = "/PR_ERA5_TRACMASS.nc"
             elif casename == "Scotland":
-                filename = "/PR_ERA5_TRACMASS_new_06-08oct2023.nc"  
-            variable='PR_TRACMASS'
-            name='TRACMASS'
-        elif model=='results univie FLEXPART':
-            filename='/'+casename.lower()+'_precip.nc'
-            variable='precip_era5'
-            name='FLEXPART-WaterSip (UniVie)'
-        elif model=='results WAM2layers':
-            name='WAM2layers'
-            if casename=='Pakistan': 
-                filename='/backtrack_*'#2022-08-23T00-00.nc'
-            elif casename=='Scotland':
-                filename='/backtrack_*'#2023-10-08T00-00.nc'
-            elif casename=='Australia': 
-                filename='/backtrack_*'#2022-02-28T00-00.nc'
-            variable='tagged_precip'
-        else: 
-            filename='/'+casename+'_precip.nc'
-            variable='precip_era5'
-            if model=='results UGhent HAMSTER':name='FLEXPART-HAMSTER Ens5'
-            elif model=='results WRF-WVT':name='WRF_WVT'
-            elif model=='results B-TrIMS':
-                name='B-TrIMS'
-                if casename=='Australia':
-                    path=basedir+'/'+casename+'/'+'results_B-TrIMS'
-                else: 
-                    path=basedir+'/'+casename+'/'+model
-                    
-            elif model=='results Ru_Xu_FLEXPART':
-                name='FLEXPART-WaterSip (IBCAS)'
-                variable='precip_era5_sum'
-            elif model=='results UiB FLEXPART WaterSip':name='FLEXPART-WaterSip (UiB)'
-            elif model=='results Uvigo':name='FLEXPART-WaterSip (LATTIN, UVigo)'
+                filename = "/PR_ERA5_TRACMASS_new_06-08oct2023.nc"
+            variable = "PR_TRACMASS"
+            name = "TRACMASS"
+        elif model == "results univie FLEXPART":
+            filename = "/" + casename.lower() + "_precip.nc"
+            variable = "precip_era5"
+            name = "FLEXPART-WaterSip (UniVie)"
+        elif model == "results WAM2layers":
+            name = "WAM2layers"
+            if casename == "Pakistan":
+                filename = "/backtrack_*"  # 2022-08-23T00-00.nc'
+            elif casename == "Scotland":
+                filename = "/backtrack_*"  # 2023-10-08T00-00.nc'
+            elif casename == "Australia":
+                filename = "/backtrack_*"  # 2022-02-28T00-00.nc'
+            variable = "tagged_precip"
+        else:
+            filename = "/" + casename + "_precip.nc"
+            variable = "precip_era5"
+            if model == "results UGhent HAMSTER":
+                name = "FLEXPART-HAMSTER Ens5"
+            elif model == "results WRF-WVT":
+                name = "WRF_WVT"
+            elif model == "results B-TrIMS":
+                name = "B-TrIMS"
+                if casename == "Australia":
+                    path = basedir + "/" + casename + "/" + "results_B-TrIMS"
+                else:
+                    path = basedir + "/" + casename + "/" + model
+
+            elif model == "results Ru_Xu_FLEXPART":
+                name = "FLEXPART-WaterSip (IBCAS)"
+                variable = "precip_era5_sum"
+            elif model == "results UiB FLEXPART WaterSip":
+                name = "FLEXPART-WaterSip (UiB)"
+            elif model == "results Uvigo":
+                name = "FLEXPART-WaterSip (LATTIN, UVigo)"
             elif model == "results CHc LAGRANTO":
                 name = "LAGRANTO-WaterSip (CHc)"
-       
+
         print(model)
-        if model not in exclude: #no precipitation timeline available (or not as mm over sink region)
-            if model=='results CHc LAGRANTO':
-                ds=xr.open_dataset(path+filename,decode_times=False)
+        if (
+            model not in exclude
+        ):  # no precipitation timeline available (or not as mm over sink region)
+            if model == "results CHc LAGRANTO":
+                ds = xr.open_dataset(path + filename, decode_times=False)
                 ds.hourssincestart.attrs["units"] = "hours since 2022-08-10"
                 A[name] = xr.decode_cf(ds)[variable]
-            elif model=='results Uvigo':
-                ds=xr.open_dataset(path+filename,decode_times=True)
-                if casename=='Pakistan':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
-                    A[name]=(ds['precip_era5'][:,240:265,988:1005]*a_gridcell_newp)/(a_gridcell_newp.sum()*18)
-                elif casename=='Scotland':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
-                    A[name]=(ds['precip_era5'][:,120:153,688:717]*a_gridcell_newp)/(a_gridcell_newp.sum()*29)
-                elif casename=='Australia':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
-                    A[name]=(ds['precip_era5'][:,448:489,1316:1353]*a_gridcell_newp)/(a_gridcell_newp.sum()*37)                
-                A[name]=A[name].sum(['lon','lat'])
-            elif model=='results WAM2layers':
-                ds=xr.open_mfdataset(path+filename,combine="nested",concat_dim="time")#.sum("time")
-                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-80,80.1,0.25), np.arange(-180,180,0.25))
-                if casename=='Pakistan':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*17) 
-                elif casename=='Scotland':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*29)
-                elif casename=='Australia':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*37)  
-                A[name]=A[name].sum(['longitude','latitude'])
-            elif model == 'results TRACMASS Dipanjan Dey':
-                A[name]=xr.open_dataset(path+filename,decode_times=True)[variable]
-                if casename=='Pakistan':
+            elif model == "results Uvigo":
+                ds = xr.open_dataset(path + filename, decode_times=True)
+                if casename == "Pakistan":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(24, 30.1, 0.25), np.arange(67, 71.1, 0.25)
+                        )
+                    )
+                    A[name] = (
+                        ds["precip_era5"][:, 240:265, 988:1005] * a_gridcell_newp
+                    ) / (a_gridcell_newp.sum() * 18)
+                elif casename == "Scotland":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(52, 60.1, 0.25), np.arange(-8, -0.9, 0.25)
+                        )
+                    )
+                    A[name] = (
+                        ds["precip_era5"][:, 120:153, 688:717] * a_gridcell_newp
+                    ) / (a_gridcell_newp.sum() * 29)
+                elif casename == "Australia":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(-32, -21.9, 0.25), np.arange(149, 158.1, 0.25)
+                        )
+                    )
+                    A[name] = (
+                        ds["precip_era5"][:, 448:489, 1316:1353] * a_gridcell_newp
+                    ) / (a_gridcell_newp.sum() * 37)
+                A[name] = A[name].sum(["lon", "lat"])
+            elif model == "results WAM2layers":
+                ds = xr.open_mfdataset(
+                    path + filename, combine="nested", concat_dim="time"
+                )  # .sum("time")
+                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(
+                    np.arange(-80, 80.1, 0.25), np.arange(-180, 180, 0.25)
+                )
+                if casename == "Pakistan":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(24, 30.1, 0.25), np.arange(67, 71.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 17
+                    )
+                elif casename == "Scotland":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(52, 60.1, 0.25), np.arange(-8, -0.9, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 29
+                    )
+                elif casename == "Australia":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(-32, -21.9, 0.25), np.arange(149, 158.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 37
+                    )
+                A[name] = A[name].sum(["longitude", "latitude"])
+            elif model == "results TRACMASS Dipanjan Dey":
+                A[name] = xr.open_dataset(path + filename, decode_times=True)[variable]
+                if casename == "Pakistan":
                     nrdays = 14
                     nrpoints = 352
-                elif casename=='Scotland':
+                elif casename == "Scotland":
                     nrdays = 3
                     nrpoints = 899
-                elif casename=='Australia':
-                    nrdays = 7 
+                elif casename == "Australia":
+                    nrdays = 7
                     nrpoints = 1517
-                A[name]=A[name]/nrpoints
-            elif model == 'results Ru_Xu_FLEXPART':
-                ds = xr.open_dataset(path+filename,decode_times=True)
-                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-90,90.1,0.25), np.arange(-180,180,0.25))
-                if casename=='Pakistan':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
-                    A[name]=(ds[variable][240:265,988:1005]*a_gridcell_newp)/(a_gridcell_newp.sum()*17) 
-                elif casename=='Scotland':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
-                    A[name]=(ds[variable][120:153,688:717]*a_gridcell_newp)/(a_gridcell_newp.sum()*29)
-                elif casename=='Australia':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
+                A[name] = A[name] / nrpoints
+            elif model == "results Ru_Xu_FLEXPART":
+                ds = xr.open_dataset(path + filename, decode_times=True)
+                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(
+                    np.arange(-90, 90.1, 0.25), np.arange(-180, 180, 0.25)
+                )
+                if casename == "Pakistan":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(24, 30.1, 0.25), np.arange(67, 71.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable][240:265, 988:1005] * a_gridcell_newp) / (
+                        a_gridcell_newp.sum() * 17
+                    )
+                elif casename == "Scotland":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(52, 60.1, 0.25), np.arange(-8, -0.9, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable][120:153, 688:717] * a_gridcell_newp) / (
+                        a_gridcell_newp.sum() * 29
+                    )
+                elif casename == "Australia":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(-32, -21.9, 0.25), np.arange(149, 158.1, 0.25)
+                        )
+                    )
                     A[name] = (ds[variable][448:489, 1316:1353] * a_gridcell_newp) / (
                         a_gridcell_newp.sum() * 37
                     )
                 A[name] = A[name].sum(["lon", "lat"])
-            else: 
-                A[name]=xr.open_dataset(path+filename,decode_times=True)[variable]
-                
-            if model=='results FLEXPART_WaterSip_TatFanCheng': 
-                A[name].values = np.full(A[name].values.shape, np.nan) #Set to Nan for now since it is not ERA5 data. 
-    return (
-        A
-    )    
+            else:
+                A[name] = xr.open_dataset(path + filename, decode_times=True)[variable]
+
+            if model == "results FLEXPART_WaterSip_TatFanCheng":
+                A[name].values = np.full(
+                    A[name].values.shape, np.nan
+                )  # Set to Nan for now since it is not ERA5 data.
+    return A
+
 
 def read_tracked_precip(basedir, casename, exclude=[]):
-    A={}
+    A = {}
 
-    for model in ['results 2LDRM','results FLEXPART_WaterSip_TatFanCheng','results UGhent HAMSTER','results Utrack Arie Staal','results WRF-WVT','results B-TrIMS','results Ru_Xu_FLEXPART','results UiB FLEXPART WaterSip',
-                  'results Uvigo','results CHc LAGRANTO','results TRACMASS Dipanjan Dey','results univie FLEXPART','results WAM2layers']:
-    
+    for model in [
+        "results 2LDRM",
+        "results FLEXPART_WaterSip_TatFanCheng",
+        "results UGhent HAMSTER",
+        "results Utrack Arie Staal",
+        "results WRF-WVT",
+        "results B-TrIMS",
+        "results Ru_Xu_FLEXPART",
+        "results UiB FLEXPART WaterSip",
+        "results Uvigo",
+        "results CHc LAGRANTO",
+        "results TRACMASS Dipanjan Dey",
+        "results univie FLEXPART",
+        "results WAM2layers",
+    ]:
         # Load and select variable for each model providing a timeline of the sum of ERA5 precipitation in the sink region as used in the diagnostic
-        path=basedir+'/'+casename+'/'+model
-        if model=='results 2LDRM': 
-            filename='/'+casename+'_precip'
-            variable='precip_era5'
-            name='2LDRM'
-        elif model=='results FLEXPART_WaterSip_TatFanCheng': 
-            filename='/'+casename+'_precip_Ens2.nc'
-            variable='precip_estimate'
-            name='FLEXPART-WaterSip (HKUST) Ens2'
-        elif model=='results Utrack Arie Staal':
-            if casename=='Pakistan': filename='/ERA5_input/'+casename+'_precip.nc'
-            else: filename='/'+casename+'_precip.nc'
-            variable='precip_era5'       
-            name='UTrack Ens2'
-        elif model=='results TRACMASS Dipanjan Dey':
-            #filename='/PR_ERA5_TRACMASS.nc'
+        path = basedir + "/" + casename + "/" + model
+        if model == "results 2LDRM":
+            filename = "/" + casename + "_precip"
+            variable = "precip_era5"
+            name = "2LDRM"
+        elif model == "results FLEXPART_WaterSip_TatFanCheng":
+            filename = "/" + casename + "_precip_Ens2.nc"
+            variable = "precip_estimate"
+            name = "FLEXPART-WaterSip (HKUST) Ens2"
+        elif model == "results Utrack Arie Staal":
+            if casename == "Pakistan":
+                filename = "/ERA5_input/" + casename + "_precip.nc"
+            else:
+                filename = "/" + casename + "_precip.nc"
+            variable = "precip_era5"
+            name = "UTrack Ens2"
+        elif model == "results TRACMASS Dipanjan Dey":
+            # filename='/PR_ERA5_TRACMASS.nc'
             if casename == "Australia":
                 filename = "/TRACMASS_evap_sources_22-28feb2022.nc"
             elif casename == "Pakistan":
                 filename = "/TRACMASS_diagnostics.nc"
             elif casename == "Scotland":
-                filename = "/TRACMASS_new_evap_sources_06-08oct2023.nc"  
-            variable='P_TRACMASS'
-            name='TRACMASS'
-        elif model=='results WAM2layers':
-            name='WAM2layers'
-            if casename=='Pakistan': 
-                filename='/backtrack_*'#2022-08-23T00-00.nc'
-            elif casename=='Scotland':
-                filename='/backtrack_*'#2023-10-08T00-00.nc'
-            elif casename=='Australia': 
-                filename='/backtrack_*'#2022-02-28T00-00.nc'
-            variable='tagged_precip'
-        elif model== 'results UGhent HAMSTER':
-            name='FLEXPART-HAMSTER Ens5'
-            filename='/'+casename+'_precip_areacor.nc'
-            variable='precip_era5_sum'
-        elif model=='results B-TrIMS':
-            name='B-TrIMS'
-            filename='/'+casename+'_precip.nc'
-            variable='precip_era5'
-            if casename=='Australia':
-                path=basedir+'/'+casename+'/'+'results_B-TrIMS'
-            else: 
-                path=basedir+'/'+casename+'/'+model
-        else: 
-            filename='/'+casename+'_precip.nc'
-            variable='precip_estimate_sum'
-            if model=='results WRF-WVT':name='WRF_WVT'
-            elif model=='results univie FLEXPART':
-                filename='/'+casename.lower()+'_precip.nc'
-                name='FLEXPART-WaterSip (UniVie)'
-            elif model=='results Ru_Xu_FLEXPART':name='FLEXPART-WaterSip (IBCAS)'
-            elif model=='results UiB FLEXPART WaterSip':name='FLEXPART-WaterSip (UiB)'
-            elif model=='results Uvigo':name='FLEXPART-LATTIN (UVigo)'
-            elif model=='results CHc LAGRANTO':
-                name='LAGRANTO-WaterSip (CHc)'
-                variable='precip_era5'
-       
+                filename = "/TRACMASS_new_evap_sources_06-08oct2023.nc"
+            variable = "P_TRACMASS"
+            name = "TRACMASS"
+        elif model == "results WAM2layers":
+            name = "WAM2layers"
+            if casename == "Pakistan":
+                filename = "/backtrack_*"  # 2022-08-23T00-00.nc'
+            elif casename == "Scotland":
+                filename = "/backtrack_*"  # 2023-10-08T00-00.nc'
+            elif casename == "Australia":
+                filename = "/backtrack_*"  # 2022-02-28T00-00.nc'
+            variable = "tagged_precip"
+        elif model == "results UGhent HAMSTER":
+            name = "FLEXPART-HAMSTER Ens5"
+            filename = "/" + casename + "_precip_areacor.nc"
+            variable = "precip_era5_sum"
+        elif model == "results B-TrIMS":
+            name = "B-TrIMS"
+            filename = "/" + casename + "_precip.nc"
+            variable = "precip_era5"
+            if casename == "Australia":
+                path = basedir + "/" + casename + "/" + "results_B-TrIMS"
+            else:
+                path = basedir + "/" + casename + "/" + model
+        else:
+            filename = "/" + casename + "_precip.nc"
+            variable = "precip_estimate_sum"
+            if model == "results WRF-WVT":
+                name = "WRF_WVT"
+            elif model == "results univie FLEXPART":
+                filename = "/" + casename.lower() + "_precip.nc"
+                name = "FLEXPART-WaterSip (UniVie)"
+            elif model == "results Ru_Xu_FLEXPART":
+                name = "FLEXPART-WaterSip (IBCAS)"
+            elif model == "results UiB FLEXPART WaterSip":
+                name = "FLEXPART-WaterSip (UiB)"
+            elif model == "results Uvigo":
+                name = "FLEXPART-LATTIN (UVigo)"
+            elif model == "results CHc LAGRANTO":
+                name = "LAGRANTO-WaterSip (CHc)"
+                variable = "precip_era5"
+
         print(model)
-        if model not in exclude: #no precipitation timeline available (or not as mm over sink region)
-            if model=='results CHc LAGRANTO':
-                ds=xr.open_dataset(path+filename,decode_times=False)
+        if (
+            model not in exclude
+        ):  # no precipitation timeline available (or not as mm over sink region)
+            if model == "results CHc LAGRANTO":
+                ds = xr.open_dataset(path + filename, decode_times=False)
                 ds.hourssincestart.attrs["units"] = "hours since 2022-08-10"
                 A[name] = xr.decode_cf(ds)[variable]
-            elif model=='results Uvigo':
-                if(casename=='Scotland'):
-                    df_Stohl = pd.read_csv(path + '/Total_Lagrangian_precip_SJ05_back.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-Stohl (UVigo)"])
+            elif model == "results Uvigo":
+                if casename == "Scotland":
+                    df_Stohl = pd.read_csv(
+                        path + "/Total_Lagrangian_precip_SJ05_back.txt",
+                        sep=" ",
+                        decimal=",",
+                        index_col=0,
+                        names=["Index", "FLEXPART-Stohl (UVigo)"],
+                    )
                 else:
-                    df_Stohl = pd.read_csv(path + '/Total_Lagrangian_precip_SJ05.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-Stohl (UVigo)"])
-                df_LATTIN = pd.read_csv(path + '/Total_Lagrangian_precip_APA22.txt', sep=' ', decimal=',',index_col=0,names=['Index',"FLEXPART-LATTIN (UVigo)"])
+                    df_Stohl = pd.read_csv(
+                        path + "/Total_Lagrangian_precip_SJ05.txt",
+                        sep=" ",
+                        decimal=",",
+                        index_col=0,
+                        names=["Index", "FLEXPART-Stohl (UVigo)"],
+                    )
+                df_LATTIN = pd.read_csv(
+                    path + "/Total_Lagrangian_precip_APA22.txt",
+                    sep=" ",
+                    decimal=",",
+                    index_col=0,
+                    names=["Index", "FLEXPART-LATTIN (UVigo)"],
+                )
                 A["FLEXPART-Stohl (UVigo)"] = df_Stohl
                 A["FLEXPART-LATTIN (UVigo)"] = df_LATTIN
-                #df_merged = pd.merge(df_Stohl,df_LATTIN,on='Index')                
-            elif model=='results WAM2layers':
-                ds=xr.open_mfdataset(path+filename,combine="nested",concat_dim="time")#.sum("time")
-                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-80,80.1,0.25), np.arange(-180,180,0.25))
-                if casename=='Pakistan':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*17) 
-                elif casename=='Scotland':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*29)
-                elif casename=='Australia':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*37)  
-                A[name]=A[name].sum(['longitude','latitude'])
-            elif model == 'results TRACMASS Dipanjan Dey':
-                ds = xr.open_dataset(path+filename,decode_times=True)
-                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-90,90.1,0.25), np.arange(-180,180,0.25))
-                if casename=='Pakistan':
+                # df_merged = pd.merge(df_Stohl,df_LATTIN,on='Index')
+            elif model == "results WAM2layers":
+                ds = xr.open_mfdataset(
+                    path + filename, combine="nested", concat_dim="time"
+                )  # .sum("time")
+                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(
+                    np.arange(-80, 80.1, 0.25), np.arange(-180, 180, 0.25)
+                )
+                if casename == "Pakistan":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(24, 30.1, 0.25), np.arange(67, 71.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 17
+                    )
+                elif casename == "Scotland":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(52, 60.1, 0.25), np.arange(-8, -0.9, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 29
+                    )
+                elif casename == "Australia":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(-32, -21.9, 0.25), np.arange(149, 158.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 37
+                    )
+                A[name] = A[name].sum(["longitude", "latitude"])
+            elif model == "results TRACMASS Dipanjan Dey":
+                ds = xr.open_dataset(path + filename, decode_times=True)
+                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(
+                    np.arange(-90, 90.1, 0.25), np.arange(-180, 180, 0.25)
+                )
+                if casename == "Pakistan":
                     nrdays = 14
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*17) 
-                elif casename=='Scotland':
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(24, 30.1, 0.25), np.arange(67, 71.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 17
+                    )
+                elif casename == "Scotland":
                     nrdays = 3
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*29)
-                elif casename=='Australia':
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(52, 60.1, 0.25), np.arange(-8, -0.9, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 29
+                    )
+                elif casename == "Australia":
                     nrdays = 7
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*37)   
-                A[name]=A[name].sum(['lon','lat'])*nrdays
-            elif model == 'results Ru_Xu_FLEXPART':
-                ds = xr.open_dataset(path+filename,decode_times=True)
-                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(np.arange(-90,90.1,0.25), np.arange(-180,180,0.25))
-                if casename=='Pakistan':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(24,30.1,0.25), np.arange(67,71.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*17) 
-                elif casename=='Scotland':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(52,60.1,0.25), np.arange(-8,-0.9,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*29)
-                elif casename=='Australia':
-                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
-                    A[name]=(ds[variable]*a_gridcell_new)/(a_gridcell_newp.sum()*37)   
-                A[name]=A[name].sum(['lon','lat'])
-            else: 
-                A[name]=xr.open_dataset(path+filename,decode_times=True)[variable]
-                
-    
-    return (
-        A
-    )    
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(-32, -21.9, 0.25), np.arange(149, 158.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 37
+                    )
+                A[name] = A[name].sum(["lon", "lat"]) * nrdays
+            elif model == "results Ru_Xu_FLEXPART":
+                ds = xr.open_dataset(path + filename, decode_times=True)
+                a_gridcell_new, l_ew_gridcell, l_mid_gridcell = get_grid_info_new(
+                    np.arange(-90, 90.1, 0.25), np.arange(-180, 180, 0.25)
+                )
+                if casename == "Pakistan":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(24, 30.1, 0.25), np.arange(67, 71.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 17
+                    )
+                elif casename == "Scotland":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(52, 60.1, 0.25), np.arange(-8, -0.9, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 29
+                    )
+                elif casename == "Australia":
+                    a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = (
+                        get_grid_info_new(
+                            np.arange(-32, -21.9, 0.25), np.arange(149, 158.1, 0.25)
+                        )
+                    )
+                    A[name] = (ds[variable] * a_gridcell_new) / (
+                        a_gridcell_newp.sum() * 37
+                    )
+                A[name] = A[name].sum(["lon", "lat"])
+            else:
+                A[name] = xr.open_dataset(path + filename, decode_times=True)[variable]
+
+    return A
