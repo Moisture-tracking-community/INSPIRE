@@ -708,7 +708,7 @@ def plot_frac_regional(
     all_maps_frac_regional, csv_wrf_wvt, list_reordered, outpath, closeplot, case
 ):
     #### preparing arrays to plot ####
-    srcs_wrf_wvt = all_maps_frac_regional["FLEXPART-Stohl (UVigo)"].copy()
+    srcs_wrf_wvt = all_maps_frac_regional["FLEXPART-Stohl&James"].copy()
     srcs_wrf_wvt.values = csv_wrf_wvt.loc["fractions"][1:-2].values
 
     srcs_regional_frac_combined = xr.concat(
@@ -725,7 +725,7 @@ def plot_frac_regional(
     srcs_regional_frac_combined = xr.concat(
         [
             srcs_regional_frac_combined,
-            all_maps_frac_regional["FLEXPART-Stohl (UVigo)"].expand_dims(ensemble=1),
+            all_maps_frac_regional["FLEXPART-Stohl&James"].expand_dims(ensemble=1),
         ],
         dim="ensemble",
     )
@@ -786,7 +786,7 @@ def plot_abs_regional(
 ):
     #### preparing arrays to plot ####
 
-    srcs_wrf_wvt = all_maps_regional["FLEXPART-Stohl (UVigo)"].copy()
+    srcs_wrf_wvt = all_maps_regional["FLEXPART-Stohl&James"].copy()
     if case == "Pakistan":
         srcs_wrf_wvt.values = csv_wrf_wvt.loc["2022-08-10_2022-08-25"][1:-2].values
     elif case == "Scotland":
@@ -807,7 +807,7 @@ def plot_abs_regional(
     srcs_regional_combined = xr.concat(
         [
             srcs_regional_combined,
-            all_maps_regional["FLEXPART-Stohl (UVigo)"].expand_dims(ensemble=1),
+            all_maps_regional["FLEXPART-Stohl&James"].expand_dims(ensemble=1),
         ],
         dim="ensemble",
     )
