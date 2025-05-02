@@ -312,7 +312,6 @@ def plotting_sources_cases(ds_data, mask, ens_names, figwidth=24, figheight=14, 
         # Dismiss label of y-axis, except for left most column
         axs[i, j].set_ylabel("Latitude")
         axs[i, j].set_xlabel("Longitude")
-        print(axs[i, j].get_ylabel())
 
         if j > 0:
             axs[i, j].set_ylabel("")
