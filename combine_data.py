@@ -304,6 +304,23 @@ def read_btrims(basedir, casename):
     )["wvcont"]
     ds.coords["longitude"] = (ds.coords["longitude"] + 180) % 360 - 180
 
+    #Set boundary moisture sources to 0
+    if(casename == "Australia"):
+        ds[:,ds['longitude'] == -151.5] = 0
+        ds[:,ds['longitude'] == 86.5] = 0
+        ds[ds['latitude'] == -58.5,:] = 0
+        ds[ds['latitude'] == 8.5,:] = 0
+    elif(casename == "Pakistan"):
+        ds[:,ds['longitude'] == 11.5] = 0
+        ds[:,ds['longitude'] == 118.5] = 0
+        ds[ds['latitude'] == -38.5,:] = 0
+        ds[ds['latitude'] == 68.5,:] = 0      
+    elif(casename == "Scotland"):
+        ds[:,ds['longitude'] == -148.5] = 0
+        ds[:,ds['longitude'] == 118.5] = 0
+        ds[ds['latitude'] == -3.5,:] = 0
+        ds[ds['latitude'] == 83.5,:] = 0           
+        
     return (
         ds.sortby(ds.longitude)
         .rename(latitude="lat", longitude="lon")
