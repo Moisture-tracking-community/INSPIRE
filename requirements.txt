@@ -1,0 +1,12 @@
+jupyterlab 
+matplotlib 
+cartopy 
+xarray
+cmocean
+regionmask
+xarray
+netCDF4
+dask
+seaborn
+nbconvert  # for running notebook from terminal
+ruff  # for automatic formatting
