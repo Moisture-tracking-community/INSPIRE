@@ -6,10 +6,11 @@ import matplotlib.pyplot as plt # Matplotlib is a scientific plotting package.
 import cartopy.crs as crs
 import matplotlib.ticker as mticker
 import argparse
+from cmocean import cm
 
 from Functions import plotting_sources_cases, plotting_sources_one_case, calc_fractional_sources
 from combine_data import read_data
-from cmocean import cm
+from paths import basedir, figure_path
 
 
 ##################
@@ -22,8 +23,7 @@ from cmocean import cm
 
 #General options
 cases=['Pakistan', 'Australia',"Scotland"]
-basedir = "./data"
-figure_path = "./Figures"
+
 
 def read_args():
     parser = argparse.ArgumentParser()

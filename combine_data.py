@@ -228,12 +228,16 @@ def read_lagranto_chc(basedir, casename):
 
     filename = f"{casename}_{year}_CHc_eventtotal_ens1.nc"
 
-    ds = (xr.open_dataset(path / filename)
+    ds = (
+        xr.open_dataset(path / filename)
         .rename(dimx_N="lon", dimy_N="lat")["N"]
         .sum("time")
         .squeeze()
-        .assign_coords(lat=np.arange(-90, 90.1, 0.25), lon=np.arange(-180, loncase, 0.25))
-        .rename("LAGRANTO-WaterSip"))
+        .assign_coords(
+            lat=np.arange(-90, 90.1, 0.25), lon=np.arange(-180, loncase, 0.25)
+        )
+        .rename("LAGRANTO-WaterSip (CHc)")
+    )
     
     return  ds.isel(lon=slice(0,1440))
 
@@ -419,7 +423,8 @@ def read_precip_era5(basedir, casename, exclude=[]):
                 variable='precip_era5_sum'
             elif model=='results UiB FLEXPART WaterSip':name='FLEXPART-WaterSip (UiB)'
             elif model=='results Uvigo':name='FLEXPART-WaterSip (LATTIN, UVigo)'
-            elif model=='results CHc LAGRANTO':name='LAGRANTO-WaterSip'
+            elif model == "results CHc LAGRANTO":
+                name = "LAGRANTO-WaterSip (CHc)"
        
         print(model)
         if model not in exclude: #no precipitation timeline available (or not as mm over sink region)
@@ -475,8 +480,10 @@ def read_precip_era5(basedir, casename, exclude=[]):
                     A[name]=(ds[variable][120:153,688:717]*a_gridcell_newp)/(a_gridcell_newp.sum()*29)
                 elif casename=='Australia':
                     a_gridcell_newp, l_ew_gridcellp, l_mid_gridcellp = get_grid_info_new(np.arange(-32,-21.9,0.25), np.arange(149,158.1,0.25))
-                    A[name]=(ds[variable][448:489,1316:1353]*a_gridcell_newp)/(a_gridcell_newp.sum()*37)   
-                A[name]=A[name].sum(['lon','lat_2'])
+                    A[name] = (ds[variable][448:489, 1316:1353] * a_gridcell_newp) / (
+                        a_gridcell_newp.sum() * 37
+                    )
+                A[name] = A[name].sum(["lon", "lat"])
             else: 
                 A[name]=xr.open_dataset(path+filename,decode_times=True)[variable]
                 
