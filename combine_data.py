@@ -59,13 +59,12 @@ def read_uvigo(basedir, casename):
     path = basedir / casename / "results Uvigo"
     return xr.Dataset(
         {
-            "FLEXPART-WaterSip (LATTIN, UVigo)": xr.open_dataarray(
+            "FLEXPART-SSW08 (LATTIN)": xr.open_dataarray(
                 path / "ERA5_APA22_reg.nc"
             ),
-            "FLEXPART-Stohl&James": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
+            "FLEXPART-SJ04 (LATTIN)": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
         }
     )
-
 
 def read_utrack(basedir, casename):
     """Read data from UTRACK.
@@ -122,11 +121,11 @@ def read_ughent(basedir, casename):
     filename_pattern = "bias_corrected_*_{ensemble}.nc"
 
     ensemble_members = {
-        "FLEXPART-HAMSTER Ens1": "ens1_sod08",
-        "FLEXPART-HAMSTER Ens2": "ens2_fas19",
-        "FLEXPART-HAMSTER Ens3": "ens3_rh20",
-        "FLEXPART-HAMSTER Ens4": "ens4_allabl",
-        "FLEXPART-HAMSTER Ens5": "ens5_rhadap80",
+        "FLEXPART-SSW08 (HAMSTER) Ens1": "ens1_sod08",
+        "FLEXPART-SSW08 (HAMSTER) Ens2": "ens2_fas19",
+        "FLEXPART-SSW08 (HAMSTER) Ens3": "ens3_rh20",
+        "FLEXPART-SSW08 (HAMSTER) Ens4": "ens4_allabl",
+        "FLEXPART-SSW08 (HAMSTER) Ens5": "ens5_rhadap80",
     }
 
     ensemble = {}
@@ -190,7 +189,7 @@ def read_flexpart_tatfancheng(basedir, casename):
         ds = xr.open_dataset(path / filename)
         # convert to -180 to 180 lon
         ds["lon"] = (ds["lon"] + 180) % 360 - 180
-        ensemble[f"FLEXPART-WaterSip (HKUST) {member}"] = ds.sortby(ds.lon)["Cb"]
+        ensemble[f"FLEXPART-SSW08 (HKUST) {member}"] = ds.sortby(ds.lon)["Cb"]
 
     return xr.Dataset(ensemble)
 
@@ -211,7 +210,7 @@ def read_flexpart_xu(basedir, casename):
     return (
         xr.open_dataset(path / filename)["data"]
         .sum("time")
-        .rename("FLEXPART-WaterSip (IBCAS)")
+        .rename("FLEXPART-SSW08 (IBCAS)")
     )
 
 
@@ -240,7 +239,7 @@ def read_lagranto_chc(basedir, casename):
         .assign_coords(
             lat=np.arange(-90, 90.1, 0.25), lon=np.arange(-180, loncase, 0.25)
         )
-        .rename("LAGRANTO-WaterSip")
+        .rename("LAGRANTO-SSW08")
     )
 
     return ds.isel(lon=slice(0, 1440))
@@ -255,7 +254,7 @@ def read_flexpart_univie(basedir, casename):
     ds = xr.open_dataset(path / filename).sum("time")
     combined = ds["moisture_uptakes_bl"] + ds["moisture_uptakes_ft"]
 
-    return combined.rename("FLEXPART-WaterSip (UniVie)")
+    return combined.rename("FLEXPART-SSW08 (UniVie)")
 
 
 def read_2ldrm(basedir, casename):
@@ -288,7 +287,7 @@ def read_flexpart_uib(basedir, casename):
 
     path = basedir / casename / "results UiB FLEXPART WaterSip"
     ds_flexpart_uib = xr.open_dataset(path / filename)["moisture_uptakes"].rename(
-        "FLEXPART-WaterSip (UiB)"
+        "FLEXPART-SSW08 (WaterSip)"
     )
     ds_flexpart_uib.coords["lon"] = (ds_flexpart_uib.coords["lon"] + 180) % 360 - 180
     ds_flexpart_uib = ds_flexpart_uib.sortby(ds_flexpart_uib.lon)
@@ -334,7 +333,7 @@ def read_btrims(basedir, casename):
     return (
         ds.sortby(ds.longitude)
         .rename(latitude="lat", longitude="lon")
-        .rename("B-TrIMS")
+        .rename("BTrIMS")
     )
 
 
