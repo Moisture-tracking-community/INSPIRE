@@ -115,12 +115,12 @@ if args.plot_all:
             "UTrack Ens3",
             "UTrack Ens4",
             "UTrack Ens5",
-            "FLEXPART-HAMSTER Ens1",
-            "FLEXPART-HAMSTER Ens2",
-            "FLEXPART-HAMSTER Ens3",
-            "FLEXPART-HAMSTER Ens4",
-            "FLEXPART-WaterSip (HKUST) Ens1",
-            "FLEXPART-WaterSip (HKUST) Ens3",
+            "FLEXPART-SSW08 (HAMSTER) Ens1",
+            "FLEXPART-SSW08 (HAMSTER) Ens2",
+            "FLEXPART-SSW08 (HAMSTER) Ens3",
+            "FLEXPART-SSW08 (HAMSTER) Ens4",
+            "FLEXPART-SSW08 (HKUST) Ens1",
+            "FLEXPART-SSW08 (HKUST) Ens3",
         ]
         ds_data = ds_data.drop_vars(drop_list)
 
