@@ -78,9 +78,9 @@ maps_features = {
 
 fig_features = {
     # case:[figwidth, figheight, figrows, figcols , vmax, vmax_frac]
-    "Scotland": [32, 20, 3, 5, 5, 0.02],  # [25,11,3,5,5, 0.02]
-    "Pakistan": [32, 20, 3, 5, 20, 0.02],  # [25,12,3,5,20, 0.02]
-    "Australia": [32, 20, 3, 5, 25, 0.02],  # [24,11,3,5,25, 0.02],
+    "Scotland": [32, 20, 5, 3, 5, 0.02],  # [25,11,3,5,5, 0.02]
+    "Pakistan": [32, 20, 5, 3, 20, 0.02],  # [25,12,3,5,20, 0.02]
+    "Australia": [32, 20, 5, 3, 25, 0.02],  # [24,11,3,5,25, 0.02],
 }
 
 
@@ -115,12 +115,12 @@ if args.plot_all:
             "UTrack Ens3",
             "UTrack Ens4",
             "UTrack Ens5",
-            "FLEXPART-HAMSTER Ens1",
-            "FLEXPART-HAMSTER Ens2",
-            "FLEXPART-HAMSTER Ens3",
-            "FLEXPART-HAMSTER Ens4",
-            "FLEXPART-WaterSip (HKUST) Ens1",
-            "FLEXPART-WaterSip (HKUST) Ens3",
+            "FLEXPART-SSW08 (HAMSTER) Ens1",
+            "FLEXPART-SSW08 (HAMSTER) Ens2",
+            "FLEXPART-SSW08 (HAMSTER) Ens3",
+            "FLEXPART-SSW08 (HAMSTER) Ens4",
+            "FLEXPART-SSW08 (HKUST) Ens1",
+            "FLEXPART-SSW08 (HKUST) Ens3",
         ]
         ds_data = ds_data.drop_vars(drop_list)
 
@@ -144,7 +144,7 @@ if args.plot_all:
             map_lons_extend=[maps_features[case][1], maps_features[case][2]],
             map_lats_extend=[maps_features[case][3], maps_features[case][4]],
             glons=fig_lon_ticks[case],
-            fsize=12,
+            fsize=25,
             fname=f"{figure_path}/Figure4_AbsoluteMoistureSources_{case}",
         )
 
