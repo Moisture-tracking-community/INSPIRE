@@ -65,6 +65,7 @@ def read_uvigo(basedir, casename):
             "FLEXPART-Stohl&James": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
         }
     )
+    '''
 
 
 def read_utrack(basedir, casename):
