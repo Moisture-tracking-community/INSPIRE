@@ -333,7 +333,7 @@ def read_btrims(basedir, casename):
     return (
         ds.sortby(ds.longitude)
         .rename(latitude="lat", longitude="lon")
-        .rename("B-TrIMS")
+        .rename("BTrIMS")
     )
 
 
