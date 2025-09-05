@@ -106,7 +106,7 @@ authors:
   - given-names: Harald
     family-names: Kunstmann
     affiliation: Karlsruhe Institute of Technology
-    orcid: '0000-0001-9573-1743'
+    orcid: 'https://orcid.org/0000-0001-9573-1743'
   - given-names: Diego
     family-names: Miralles
     affiliation: Ghent University
