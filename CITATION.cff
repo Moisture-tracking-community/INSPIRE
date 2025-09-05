@@ -8,67 +8,117 @@ message: >-
   intercomparison code in your (academic) work.
 type: software
 authors:
-  - given-names: Imme Bo
-    family-names: Benedict
-    affiliation: Wageningen University
-    orcid: 'https://orcid.org/0000-0002-1946-6332'
+# in the order of number of commits to the repo up until 2 commits
   - given-names: Chris
     family-names: Weijenborg
-    affiliation: Wageningen University
+    affiliation: Wageningen University and Research
     orcid: 'https://orcid.org/0000-0003-1663-2806'
-  - given-names: Jessica
-    family-names: Keune
-    affiliation: European Centre for Medium-Range Weather Forecasts
-    orcid: 'https://orcid.org/0000-0001-6104-2165'
-# from here one alphabetically (can of course be changed in case of significant contributions)
-  - given-names: Franziska
-    family-names: Aemisegger
-    affiliation: University of Bern
-    orcid: 'https://orcid.org/0000-0002-4022-9825'
-  - given-names: Alfredo
-    family-names: Crespo-Otero
-    affiliation: University of Santiago de Compostela
-    orcid: 'https://orcid.org/0009-0009-6032-0827'
-  - given-names: Victoria M H
-    family-names: Deman
-    affiliation: Ghent University
-    orcid: 'https://orcid.org/0009-0002-0200-2408'
-  - given-names: Andries Jan
-    family-names: de Vries
-    affiliation: University of Lausanne
-    orcid: 'https://orcid.org/0000-0002-1175-6474'
-  - given-names: Marina
-    family-names: Duetsch
-    affiliation: University of Vienna
-    orcid: 'https://orcid.org/0000-0002-1128-4198'
-  - given-names: Jason P
-    family-names: Evans
-    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
-    orcid: 'https://orcid.org/0000-0003-1776-3429'
-  - given-names: Chiara M
-    family-names: Holgate
-    affiliation: Australian National University, ARC Centre of Excellence for Climate Extremes
-    orcid: 'https://orcid.org/0000-0002-3645-2856'
-  - given-names: Damián
-    family-names: Insua-Costa
-    affiliation: Ghent University
-    orcid: ''
   - given-names: Peter
     family-names: Kalverla
     affiliation: Netherlands eScience Center
     orcid: 'https://orcid.org/0000-0002-5025-7862'
-  - given-names: SeungUk
-    family-names: Kim
-    affiliation: University of Illiniois Urbana-Champaign
-    orcid: 'https://orcid.org/0000-0001-7788-5298'
-  - given-names: Gerbrand
-    family-names: Koren
-    affiliation: Utrecht University
-    orcid: 'https://orcid.org/0000-0002-2275-0713'
+  - given-names: Marina
+    family-names: Duetsch
+    affiliation: University of Vienna
+    orcid: 'https://orcid.org/0000-0002-1128-4198'
+  - given-names: Iris 
+    family-names: Thurnherr
+    affiliation: ETH Zürich
+    orcid: 'https://orcid.org/0000-0003-3647-0373'
+  - given-names: Alfredo
+    family-names: Crespo-Otero
+    affiliation: University of Santiago de Compostela
+    orcid: 'https://orcid.org/0009-0009-6032-0827'
   - given-names: Albenis 
     family-names: Pérez-Alarcón
     affiliation: University of Vigo
     orcid: 'https://orcid.org/0000-0002-9454-2331'
+  - given-names: SeungUk
+    family-names: Kim
+    affiliation: University of Illiniois Urbana-Champaign
+    orcid: 'https://orcid.org/0000-0001-7788-5298'
+  - given-names: Victoria M H
+    family-names: Deman
+    affiliation: Ghent University
+    orcid: 'https://orcid.org/0009-0002-0200-2408'
+  - given-names: Ruud J
+    family-names: van der Ent
+    affiliation: Delft University of Technology
+    orcid: 'https://orcid.org/0000-0001-5450-4333' 
+  - given-names: Chiara M
+    family-names: Holgate
+    affiliation: Australian National University, ARC Centre of Excellence for Climate Extremes
+    orcid: 'https://orcid.org/0000-0002-3645-2856'
+# provided code that was directly put on the github repo so not seen in number of commits
+  - given-names: Andrea S
+    family-names: Taschetto
+    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
+    orcid: 'https://orcid.org/0000-0001-6020-1603'
+  - given-names: Andries Jan
+    family-names: de Vries
+    affiliation: University of Lausanne
+    orcid: 'https://orcid.org/0000-0002-1175-6474'
+# from here on alphabetically all authors of the INSPIRE project (can of course be changed in case of significant contributions)
+  - given-names: Franziska
+    family-names: Aemisegger
+    affiliation: University of Bern
+    orcid: 'https://orcid.org/0000-0002-4022-9825'
+  - given-names: Imme
+    family-names: Benedict
+    affiliation: Wageningen University and Research
+    orcid: 'https://orcid.org/0000-0002-1946-6332'
+  - given-names: Tat Fan
+    family-names: Cheng
+    affiliation: The Hong Kong University of Science and Technology
+    orcid: 'https://orcid.org/0000-0003-4827-6113'
+  - given-names: Dipanjan
+    family-names: Dey
+    affiliation: Indian Institute of Technology Bhubaneswar
+    orcid: 'https://orcid.org/0000-0002-9588-4042'
+  - given-names: Jason P
+    family-names: Evans
+    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
+    orcid: 'https://orcid.org/0000-0003-1776-3429'
+  - given-names: Luis
+    family-names: Gimeno
+    affiliation: Universidade de Vigo
+    orcid: 'https://orcid.org/0000-0002-0778-3605'
+  - given-names: Rein
+    family-names: Haarsma
+    affiliation: KNMI
+    orcid: 'https://orcid.org/0000-0001-7171-2687'
+  - given-names: Marte G
+    family-names: Hofsteenge
+    affiliation: Utrecht University
+    orcid: 'https://orcid.org/0000-0001-5369-5318'
+  - given-names: Damián
+    family-names: Insua-Costa
+    affiliation: Ghent University
+    orcid: 'https://orcid.org/0000-0001-9699-2806'
+  - given-names: Akash
+    family-names: Koppa
+    affiliation: University of Maryland College Park
+    orcid: 'https://orcid.org/0000-0001-5671-0878'
+  - given-names: Gerbrand
+    family-names: Koren
+    affiliation: Utrecht University
+    orcid: 'https://orcid.org/0000-0002-2275-0713'
+  - given-names: Harald
+    family-names: Kunstmann
+    affiliation: Karlsruhe Institute of Technology
+    orcid: '0000-0001-9573-1743'
+  - given-names: Diego
+    family-names: Miralles
+    affiliation: Ghent University
+    orcid: 'https://orcid.org/0000-0001-6186-5751'
+  - given-names: Yinglin
+    family-names: Mu
+    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
+    orcid: 'https://orcid.org/0009-0004-0724-4363'
+  - given-names: Raquel
+    family-names: Nieto
+    affiliation: Universidade de Vigo
+    orcid: 'https://orcid.org/0000-0002-8984-0959'
   - given-names: Harald
     family-names: Sodemann
     affiliation: Geophysical Institute, University of Bergen
@@ -77,18 +127,10 @@ authors:
     family-names: Staal
     affiliation: Utrecht University
     orcid: 'https://orcid.org/0000-0001-5409-1436'
-  - given-names: Andrea S
-    family-names: Taschetto
-    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
-    orcid: 'https://orcid.org/0000-0001-6020-1603'
-  - given-names: Iris 
-    family-names: Thurnherr
-    affiliation: ETH Zürich
-    orcid: 'https://orcid.org/0000-0003-3647-0373'
-  - given-names: Ruud J
-    family-names: van der Ent
-    affiliation: Delft University of Technology
-    orcid: 'https://orcid.org/0000-0001-5450-4333' 
+  - given-names: Jolanda
+    family-names: Theeuwen
+    affiliation: Utrecht University
+    orcid: 'https://orcid.org/0000-0002-7505-0294'
   - given-names: Jianhui
     family-names: Wei
     affiliation: Karlsruhe Institute of Technology
@@ -97,7 +139,7 @@ authors:
     family-names: Xu
     affiliation: Institute of Botany, The Chinese Academy of Sciences
     orcid: 'https://orcid.org/0000-0002-5203-5980'
-repository-code: 'https://github.com/WAM2layers/Moisture_tracking_intercomparison'
+repository-code: 'https://github.com/Moisture-tracking-community/INSPIRE'
 abstract: >-
   We aim to assemble the diverse moisture tracking community 
   to address and quantify uncertainty associated with moisture tracking methods. 
@@ -107,6 +149,7 @@ abstract: >-
   that are selected.
 keywords:
   - moisture tracking methods
+  - extreme precipitation
   - intercomparison
   - uncertainty
   - python
