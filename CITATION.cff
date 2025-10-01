@@ -1,14 +1,13 @@
 # This CITATION.cff file was generated with cffinit.
 # Visit https://bit.ly/cffinit to generate yours today!
 
-cff-version: 1.1.0
+cff-version: 1.2.0
 title: Moisture tracking intercomparison
 message: >-
   Please use the citation information if you used the
   intercomparison code in your (academic) work.
 type: software
 authors:
-# in the order of number of commits to the repo up until 2 commits
   - given-names: Chris
     family-names: Weijenborg
     affiliation: Wageningen University and Research
@@ -21,7 +20,7 @@ authors:
     family-names: Duetsch
     affiliation: University of Vienna
     orcid: 'https://orcid.org/0000-0002-1128-4198'
-  - given-names: Iris 
+  - given-names: Iris
     family-names: Thurnherr
     affiliation: ETH Zürich
     orcid: 'https://orcid.org/0000-0003-3647-0373'
@@ -29,7 +28,7 @@ authors:
     family-names: Crespo-Otero
     affiliation: University of Santiago de Compostela
     orcid: 'https://orcid.org/0009-0009-6032-0827'
-  - given-names: Albenis 
+  - given-names: Albenis
     family-names: Pérez-Alarcón
     affiliation: University of Vigo
     orcid: 'https://orcid.org/0000-0002-9454-2331'
@@ -44,21 +43,24 @@ authors:
   - given-names: Ruud J
     family-names: van der Ent
     affiliation: Delft University of Technology
-    orcid: 'https://orcid.org/0000-0001-5450-4333' 
+    orcid: 'https://orcid.org/0000-0001-5450-4333'
   - given-names: Chiara M
     family-names: Holgate
-    affiliation: Australian National University, ARC Centre of Excellence for Climate Extremes
+    affiliation: >-
+      Australian National University, ARC Centre of
+      Excellence for Climate Extremes
     orcid: 'https://orcid.org/0000-0002-3645-2856'
-# provided code that was directly put on the github repo so not seen in number of commits
   - given-names: Andrea S
     family-names: Taschetto
-    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
+    affiliation: >-
+      Climate Change Research Centre and ARC Centre of
+      Excellence for Climate Extremes, University of New
+      South Wales
     orcid: 'https://orcid.org/0000-0001-6020-1603'
   - given-names: Andries Jan
     family-names: de Vries
     affiliation: University of Lausanne
     orcid: 'https://orcid.org/0000-0002-1175-6474'
-# from here on alphabetically all authors of the INSPIRE project (can of course be changed in case of significant contributions)
   - given-names: Franziska
     family-names: Aemisegger
     affiliation: University of Bern
@@ -77,7 +79,10 @@ authors:
     orcid: 'https://orcid.org/0000-0002-9588-4042'
   - given-names: Jason P
     family-names: Evans
-    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
+    affiliation: >-
+      Climate Change Research Centre and ARC Centre of
+      Excellence for Climate Extremes, University of New
+      South Wales
     orcid: 'https://orcid.org/0000-0003-1776-3429'
   - given-names: Luis
     family-names: Gimeno
@@ -113,7 +118,10 @@ authors:
     orcid: 'https://orcid.org/0000-0001-6186-5751'
   - given-names: Yinglin
     family-names: Mu
-    affiliation: Climate Change Research Centre and ARC Centre of Excellence for Climate Extremes, University of New South Wales
+    affiliation: >-
+      Climate Change Research Centre and ARC Centre of
+      Excellence for Climate Extremes, University of New
+      South Wales
     orcid: 'https://orcid.org/0009-0004-0724-4363'
   - given-names: Raquel
     family-names: Nieto
@@ -121,7 +129,7 @@ authors:
     orcid: 'https://orcid.org/0000-0002-8984-0959'
   - given-names: Harald
     family-names: Sodemann
-    affiliation: Geophysical Institute, University of Bergen
+    affiliation: 'Geophysical Institute, University of Bergen'
     orcid: 'https://orcid.org/0000-0002-8167-0860'
   - given-names: Arie
     family-names: Staal
@@ -137,16 +145,18 @@ authors:
     orcid: 'https://orcid.org/0000-0001-8609-9600'
   - given-names: Ru
     family-names: Xu
-    affiliation: Institute of Botany, The Chinese Academy of Sciences
+    affiliation: 'Institute of Botany, The Chinese Academy of Sciences'
     orcid: 'https://orcid.org/0000-0002-5203-5980'
 repository-code: 'https://github.com/Moisture-tracking-community/INSPIRE'
 abstract: >-
-  We aim to assemble the diverse moisture tracking community 
-  to address and quantify uncertainty associated with moisture tracking methods. 
-  Moisture tracking methods follow the precipitated moisture in the atmosphere 
-  back in time to find out where precipitation was evaporated. Here we compare the 
-  source regions of precipitation from multiple models for a diverse set of hydrometeorological cases
-  that are selected.
+  We aim to assemble the diverse moisture tracking
+  community  to address and quantify uncertainty associated
+  with moisture tracking methods.  Moisture tracking methods
+  follow the precipitated moisture in the atmosphere  back
+  in time to find out where precipitation was evaporated.
+  Here we compare the  source regions of precipitation from
+  multiple models for a diverse set of hydrometeorological
+  cases that are selected.
 keywords:
   - moisture tracking methods
   - extreme precipitation
@@ -156,5 +166,5 @@ keywords:
   - moisture recycling
   - teamwork
 license: Apache-2.0
-version: v1.0.0
-date-released: '2024-05-27'
+version: v2025.10.0
+date-released: '2025-10-01'
