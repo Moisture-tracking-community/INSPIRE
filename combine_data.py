@@ -59,12 +59,11 @@ def read_uvigo(basedir, casename):
     path = basedir / casename / "results Uvigo"
     return xr.Dataset(
         {
-            "FLEXPART-SSW08 (LATTIN)": xr.open_dataarray(
-                path / "ERA5_APA22_reg.nc"
-            ),
+            "FLEXPART-SSW08 (LATTIN)": xr.open_dataarray(path / "ERA5_APA22_reg.nc"),
             "FLEXPART-SJ04 (LATTIN)": xr.open_dataarray(path / "ERA5_SJ05_reg.nc"),
         }
     )
+
 
 def read_utrack(basedir, casename):
     """Read data from UTRACK.
@@ -331,9 +330,7 @@ def read_btrims(basedir, casename):
         ds[ds["latitude"] == 83.5, :] = 0
 
     return (
-        ds.sortby(ds.longitude)
-        .rename(latitude="lat", longitude="lon")
-        .rename("BTrIMS")
+        ds.sortby(ds.longitude).rename(latitude="lat", longitude="lon").rename("BTrIMS")
     )
 
 
