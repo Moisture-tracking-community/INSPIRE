@@ -563,7 +563,7 @@ def read_precip_era5(basedir, casename, exclude=[]):
                     A[name] = (ds[variable][448:489, 1316:1353] * a_gridcell_newp) / (
                         a_gridcell_newp.sum() * 37
                     )
-                A[name] = A[name].sum(["lon", "lat"])
+                A[name] = A[name].sum(["lon", "lat_2"])
             else:
                 A[name] = xr.open_dataset(path + filename, decode_times=True)[variable]
 
@@ -601,7 +601,7 @@ def read_tracked_precip(basedir, casename, exclude=[]):
         elif model == "results FLEXPART_WaterSip_TatFanCheng":
             filename = "/" + casename + "_precip_Ens2.nc"
             variable = "precip_estimate"
-            name = "FLEXPART-WaterSip (HKUST) Ens2"
+            name = "FLEXPART-SSW08 (HKUST) Ens2"
         elif model == "results Utrack Arie Staal":
             if casename == "Pakistan":
                 filename = "/ERA5_input/" + casename + "_precip.nc"
@@ -629,11 +629,11 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                 filename = "/backtrack_*"  # 2022-02-28T00-00.nc'
             variable = "tagged_precip"
         elif model == "results UGhent HAMSTER":
-            name = "FLEXPART-HAMSTER Ens5"
+            name = "FLEXPART-SSW08 (HAMSTER) Ens5"
             filename = "/" + casename + "_precip_areacor.nc"
             variable = "precip_era5_sum"
         elif model == "results B-TrIMS":
-            name = "B-TrIMS"
+            name = "BTrIMS"
             filename = "/" + casename + "_precip.nc"
             variable = "precip_era5"
             if casename == "Australia":
@@ -647,15 +647,15 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                 name = "WRF_WVT"
             elif model == "results univie FLEXPART":
                 filename = "/" + casename.lower() + "_precip.nc"
-                name = "FLEXPART-WaterSip (UniVie)"
+                name = "FLEXPART-SSW08 (UniVie)"
             elif model == "results Ru_Xu_FLEXPART":
-                name = "FLEXPART-WaterSip (IBCAS)"
+                name = "FLEXPART-SSW08 (IBCAS)"
             elif model == "results UiB FLEXPART WaterSip":
-                name = "FLEXPART-WaterSip (UiB)"
+                name = "FLEXPART-SSW08 (WaterSip)"
             elif model == "results Uvigo":
-                name = "FLEXPART-WaterSip (LATTIN, UVigo)"
+                name = "FLEXPART-SSW08 (LATTIN)"
             elif model == "results CHc LAGRANTO":
-                name = "LAGRANTO-WaterSip"
+                name = "LAGRANTO-SSW08"
                 variable = "precip_era5"
 
         print(model)
@@ -673,7 +673,7 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                         sep=" ",
                         decimal=",",
                         index_col=0,
-                        names=["Index", "FLEXPART-Stohl&James"],
+                        names=["Index", "FLEXPART-SJ04 (LATTIN)"],
                     )
                 else:
                     df_Stohl = pd.read_csv(
@@ -681,17 +681,17 @@ def read_tracked_precip(basedir, casename, exclude=[]):
                         sep=" ",
                         decimal=",",
                         index_col=0,
-                        names=["Index", "FLEXPART-Stohl&James"],
+                        names=["Index", "FLEXPART-SJ04 (LATTIN)"],
                     )
                 df_LATTIN = pd.read_csv(
                     path + "/Total_Lagrangian_precip_APA22.txt",
                     sep=" ",
                     decimal=",",
                     index_col=0,
-                    names=["Index", "FLEXPART-WaterSip (LATTIN, UVigo)"],
+                    names=["Index", "FLEXPART-SSW08 (LATTIN)"],
                 )
-                A["FLEXPART-Stohl&James"] = df_Stohl
-                A["FLEXPART-WaterSip (LATTIN, UVigo)"] = df_LATTIN
+                A["FLEXPART-SJ04 (LATTIN)"] = df_Stohl
+                A["FLEXPART-SSW08 (LATTIN)"] = df_LATTIN
                 # df_merged = pd.merge(df_Stohl,df_LATTIN,on='Index')
             elif model == "results WAM2layers":
                 ds = xr.open_mfdataset(
